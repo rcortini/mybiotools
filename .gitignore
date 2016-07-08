@@ -1,0 +1,5 @@
+# compiled python modules
+*.pyc
+
+# editor swap files
+*.swp
