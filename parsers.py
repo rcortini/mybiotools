@@ -119,3 +119,16 @@ def load_hic_Rao (hic_res,name,normed=True) :
                     M = float(c[2])
             H[i,j] = H[j,i] = M
     return H
+
+def chromosome_size (name) :
+    """
+    Returns the size in base pairs of a given chromosome, according to the
+    genome version h19
+    """
+    fname = '/mnt/ant-login/rcortini/work/data/human/genome_size.dat'
+    with open (fname,'r') as f :
+        for line in f :
+            curatedline = line.strip('\n').split()
+            if curatedline[0] == 'chr%s'%(name) :
+                return int (curatedline[1])
+    return 0
