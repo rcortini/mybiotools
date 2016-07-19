@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import pysam
 
 def parse_sam (samfilename, mapq_threshold=20) :
