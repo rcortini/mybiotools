@@ -1,3 +1,4 @@
+import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis.distances import contact_matrix, distance_array
 
@@ -81,14 +82,14 @@ class hoomdsim :
         for ts in u.trajectory [teq::tsample] :
             d = distance_array (polymer.positions,tracers.positions,
                                 box=ts.dimensions)
-            c = np.where (d<cutoff)
+            c = np.where (d<threshold)
             if c :    
                 for i in range(len(c[1])) :
                     tracer_i = c[1][i]
                     contact_i = c[0][i]
-                    contacts[tracer_i].append (contact_i)
-        self.contact_trace = contacts
+                    contact_trace[tracer_i].append (contact_i)
+        self.contact_trace = contact_trace
         d = np.empty(0,dtype=int)
-        for contact in contacts :
+        for contact in contact_trace :
             d = np.concatenate ((d,np.abs(np.ediff1d (contact))))
         self.d_dist = np.histogram (d,bins=nbins,normed=True)
