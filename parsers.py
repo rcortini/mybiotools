@@ -70,3 +70,52 @@ def parse_narrowpeak (fname) :
                                 ('peak',np.int64),
                                ])
     return np.genfromtxt (fname,dtype=narrowpeak_dtype)
+
+def res_string (res) :
+    """
+    Converts the integer resolution 'res' into a string of type
+    5kb, 10kb, 1mb...
+    """
+    m = res/1000
+    if m>=1000 :
+        s = 'm'
+        m = m/1000
+    else :
+        s = 'k'
+    return '%d%sb'%(m,s)
+
+def load_hic_Rao (hic_res,name,normed=True) :
+    """
+    Load the Hi-C matrices from the experiments of Rao et al, 2014, for the
+    lymphoblastoid cell line GM12878. User must specify the resolution, the name
+    of the chromosome, and whether or not to apply the normalization suggested
+    in the paper
+    """
+    Rao_datadir = '/mnt/ant-login/rcortini/work/data/GM12878_replicate/'
+    hic_res_string = res_string (hic_res)
+    # build the directory name that contains the data that we want to analyze
+    d = '%s/%s_resolution_intrachromosomal/chr%s/MAPQGE30'%(Rao_datadir,
+                                                            hic_res_string,
+                                                            name)
+    fname = '%s/chr%s_%s.RAWobserved'%(d,name,hic_res_string)
+    normname = '%s/chr%s_%s.KRnorm'%(d,name,hic_res_string)
+    if not os.path.exists (fname) or not os.path.exists (fname) :
+        raise ValueError('Data for chromosome %s at resolution %d does not exist'
+                         %(name,hic_res))
+    norm = np.loadtxt (normname)
+    N = norm.shape[0]
+    H = np.zeros ((N,N))
+    with open(fname,'r') as f :
+        for line in f :
+            c = line.strip('\n').split()
+            i = int(c[0])/hic_res
+            j = int(c[1])/hic_res
+            if np.isnan (norm[i]) or np.isnan (norm[j]) :
+                M = float(c[2])
+            else :
+                if normed :
+                    M = float(c[2])/(norm[i]*norm[j])
+                else :
+                    M = float(c[2])
+            H[i,j] = H[j,i] = M
+    return H
