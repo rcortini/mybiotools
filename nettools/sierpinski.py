@@ -9,6 +9,7 @@ class PrimaryTriangle :
     def __init__ (self,vertices) :
         self.vertices = vertices
     def edges (self) :
+        v = self.vertices
         return [(v[i-1],v[i]) for i in range(3)]
 
 def iterate_triangle (triangle,num_vertices) :
@@ -55,7 +56,7 @@ class SierpinskiGasket :
         for i in range (self.num_vertices) :
             G.add_node (i)
         for t in allprimarytriangles(self.triangles) :
-            for edge in t.edges :
+            for edge in t.edges() :
                 G.add_edge (edge[0],edge[1])
         return G
     def get_adjacency_matrix (self) :
