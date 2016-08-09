@@ -1,4 +1,5 @@
 import networkx as nx
+from .lattice import Lattice
 
 def site3d_id (i,j,k,n) :
     """
@@ -13,7 +14,7 @@ class Site3D :
     def __init__ (self,i,j,k) :
         self.x = (i,j,k)
 
-class CubicLattice :
+class CubicLattice (Lattice) :
     """
     The cubic lattice class. It is instantiated using the number of sites on
     each edge.
