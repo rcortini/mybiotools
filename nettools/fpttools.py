@@ -1,5 +1,7 @@
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
+import besselzeros
+from scipy.special import gamma, jv
 
 def row_normalize_matrix (M) :
     """
@@ -54,7 +56,7 @@ def FPT_distribution (P,startsite,endsite,bins,
     fpt = np.zeros (ntrials)
     for i in range (ntrials) :
         fpt[i] = FPT (P,startsite,endsite)
-    return np.histogram (fpt,bins=bins,density=True)[0]*np.ediff1d(bins)
+    return np.histogram (fpt,bins=bins,density=True)[0]
 
 def GFPT (Q,target,bins,ntrials=None,nthreads=1) :
     """
@@ -98,7 +100,7 @@ def MFPT (gfpt,bins) :
 def GFPT_theory (T,nu) :
     """
     This function returns the theoretical GFPT distribution. Taken from
-    Bénichou2011, equation 3. User should supply the values of the rescaled
+    Benichou2011, equation 3. User should supply the values of the rescaled
     times to compute, and the "nu" parameter, which is the ratio between the
     fractal dimension and the walk dimension.
     """
