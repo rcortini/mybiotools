@@ -94,3 +94,26 @@ def MFPT (gfpt,bins) :
     """
     x = np.array([0.5*(bins[i-1]+bins[i]) for i in range (1,len(bins))])
     return np.sum(x*gfpt*np.ediff1d(bins))
+
+def GFPT_theory (T,nu) :
+    """
+    This function returns the theoretical GFPT distribution. Taken from
+    Bénichou2011, equation 3. User should supply the values of the rescaled
+    times to compute, and the "nu" parameter, which is the ratio between the
+    fractal dimension and the walk dimension.
+    """
+    if nu>=1 :
+        # non-compact case
+        return np.exp(-T)
+    else :
+        # compact case
+        nterms = 100
+        A = 2.0*(1-nu**2)/nu
+        ak = np.array([besselzeros.n(n,-nu) for n in xrange(1,nterms)])
+        jnu = jv(nu,ak)
+        j1_nu = jv(1.0-nu,ak)
+        gt = np.zeros_like(T)
+        for i,t in enumerate(T) :
+            sum_terms = np.power(ak,1.0-2.0*nu) * jnu/j1_nu * np.exp (-ak**2/A * t)
+            gt[i] = 2.0**(2.0*nu+1)/A * gamma(1.0+nu)/gamma(1.0-nu) * np.sum (sum_terms)
+        return gt
