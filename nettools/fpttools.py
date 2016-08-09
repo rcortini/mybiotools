@@ -84,7 +84,7 @@ def GFPT (Q,target,bins,ntrials=None,nthreads=1) :
     W = np.sum (Q,axis=1)
     W /= np.sum(W)
     gfpt = np.sum (W*fpt_startsite,axis=1)
-    return gfpt,fpt_startsite
+    return gfpt
 
 def MFPT (gfpt,bins) :
     """
