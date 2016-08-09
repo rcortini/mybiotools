@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+from .lattice import Lattice
 
 class PrimaryTriangle :
     """
@@ -27,7 +28,7 @@ def allprimarytriangles (trianglelist) :
             pt.append (triangle)
     return pt
 
-class SierpinskiGasket :
+class SierpinskiGasket (Lattice) :
     """
     This class instantiates an object that contains a nested list of lists, at
     the bottom of which there are PrimaryTriangle objects. The class can be used
@@ -59,7 +60,3 @@ class SierpinskiGasket :
             for edge in t.edges() :
                 G.add_edge (edge[0],edge[1])
         return G
-    def get_adjacency_matrix (self) :
-        return np.asarray (nx.to_numpy_matrix(self.get_graph()))
-    def draw (self) :
-        nx.draw_spectral (self.get_graph(),with_labels=True)
