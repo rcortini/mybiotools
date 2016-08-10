@@ -3,3 +3,4 @@ from .fpttools import FPT, FPT_distribution,\
 from .sierpinski import SierpinskiGasket
 from .cubic import CubicLattice
 from .square import SquareLattice
+from .chain import Chain
