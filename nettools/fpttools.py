@@ -2,6 +2,7 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 import besselzeros
 from scipy.special import gamma, jv
+from scipy.linalg import eig
 
 def row_normalize_matrix (M) :
     """
@@ -120,12 +121,12 @@ def GFPT_theory (T,nu) :
             gt[i] = 2.0**(2.0*nu+1)/A * gamma(1.0+nu)/gamma(1.0-nu) * np.sum (sum_terms)
         return gt
 
-def GMFPT_theory (A,j,weighted=True) :
+def GMFPT_theory (A,weighted=True) :
     """
     According to the theory of Lin et al., 2012, the global mean first passage
     time can be calculated by finding the eigenspectrum of the Laplacian matrix
     of the graph. This function calculates the GMFPT from their formula, for the
-    graph described by the adjacency matrix A, to target j. Optional parameter
+    graph described by the adjacency matrix A, to all sites. Optional parameter
     'weighted' allows for the choice of having the same quantity but weighted
     with the stationary distribution.
     """
@@ -137,14 +138,16 @@ def GMFPT_theory (A,j,weighted=True) :
     sortidx = np.argsort(L_eigs[0])
     l = np.array([L_eigs[0][i].real for i in sortidx])
     v = np.array([L_eigs[1][:,i].real for i in sortidx])
-    T = 0.
+    T = np.zeros(N)
     dv = np.dot (v,d)
     if not weighted :
-        for i in range(1,N) :
-            T += 1.0/l[i] * (2*E*v[i,j]**2 - v[i,j]*dv[i])
+        for j in xrange(N) :
+            for i in range(1,N) :
+                T[j] += 1.0/l[i] * (2*E*v[i,j]**2 - v[i,j]*dv[i])
         return float(N)/(N-1.0) * T
     else :
-        for i in range(1,N) :
-            dvi = v[i,j]*dv[i]
-            T += 1.0/l[i] * ((2*E)**2*v[i,j]**2 - 2*v[i,j]*2*E*dvi - dvi**2)
+        for j in xrange(N) :
+            for i in range(1,N) :
+                dvi = v[i,j]*dv[i]
+                T[j] += 1.0/l[i]*((2*E)**2*v[i,j]**2 - 2*v[i,j]*2*E*dvi - dvi**2)
         return T/(2*E)
