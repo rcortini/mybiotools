@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import pysam
+import pandas as pd
 
 def parse_sam (samfilename, mapq_threshold=20) :
     """
@@ -133,3 +134,9 @@ def chromosome_size (name) :
             if curatedline[0] == 'chr%s'%(name) :
                 return int (curatedline[1])
     return 0
+
+def parse_hic (name) :
+    """
+    Parses a Hi-C file. Supposed to be a xls Excel file. (TODO: extend)
+    """
+    return pd.read_excel(f).as_matrix()
