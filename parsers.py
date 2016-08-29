@@ -10,7 +10,7 @@ def parse_sam (samfilename, mapq_threshold=20) :
     For the moment can handle only very simple cases of flags.
     """
     sam_dtype = np.dtype([
-                    ('chr','S254'),
+                    ('chr','S256'),
                     ('start',np.int64),
                     ('end',np.int64),
                     ('name','S2048'),
@@ -45,9 +45,9 @@ def parse_broadpeak (fname) :
                                 ('chr','S10'),
                                 ('start',np.int64),
                                 ('end',np.int64),
-                                ('name','S10'),
+                                ('name','S2048'),
                                 ('score','i8'),
-                                ('strand','S10'),
+                                ('strand','S2'),
                                 ('val','f'),
                                 ('p','f'),
                                 ('q','f'),
@@ -63,9 +63,9 @@ def parse_narrowpeak (fname) :
                                 ('chr','S10'),
                                 ('start',np.int64),
                                 ('end',np.int64),
-                                ('name','S10'),
+                                ('name','S256'),
                                 ('score','i8'),
-                                ('strand','S10'),
+                                ('strand','S2'),
                                 ('val','f'),
                                 ('p','f'),
                                 ('q','f'),
