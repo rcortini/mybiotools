@@ -59,3 +59,10 @@ class CellLine :
                 # if the track satisfies all the desired conditions.
                 tracks.append(track)
         return tracks
+    @property
+    def data (self) :
+        return self._data
+    @data.setter
+    def data(self,track) :
+        # TODO: sanity checks
+        self._data.append (track)
