@@ -1,7 +1,25 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import os
 from .parsers import parse_hic, parse_narrowpeak
+from .vistools import line_plot
+
+def select_tracks (tracks,conditions) :
+    selected_tracks = []
+    if not conditions :
+        return tracks
+    for track in tracks :
+        for key,val in conditions.iteritems() :
+            try :
+                if track[key] != val :
+                    break
+            except KeyError :
+                break
+            # the iteration gets here only if all condition keys exist, and
+            # if the track satisfies all the desired conditions.
+            selected_tracks.append(track)
+    return selected_tracks
 
 class CellLine :
     def __init__ (self,name) :
@@ -47,18 +65,8 @@ class CellLine :
         which the keys correspond to metadata fields, and the values to the
         desired value of that field.
         """
-        tracks = []
-        for track in self._data :
-            for key,val in conditions.iteritems() :
-                try :
-                    if track[key] != val :
-                        break
-                except KeyError :
-                    break
-                # the iteration gets here only if all condition keys exist, and
-                # if the track satisfies all the desired conditions.
-                tracks.append(track)
-        return tracks
+        return select_tracks (self.data,conditions)
+
     @property
     def data (self) :
         return self._data
@@ -98,3 +106,15 @@ class Region :
                         continue
                 mytrack['track'][start] = peak['val']
         self._data.append (mytrack)
+    def get_tracks (self,conditions) :
+        return select_tracks (self._data,conditions)
+    def plot_tracks (self,conditions) :
+        selected_tracks = select_tracks (self._data,conditions)
+        n = len (selected_tracks)
+        fig, axes = plt.subplots (n,1,figsize=(10,n*3))
+        for i,track in enumerate(selected_tracks) :
+            if i==n-1 :
+                line_plot (axes[i],self.xvals,track['track'],show_xaxis=True)
+            else :
+                line_plot (axes[i],self.xvals,track['track'])
+        return fig
