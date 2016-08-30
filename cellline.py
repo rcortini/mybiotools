@@ -66,3 +66,35 @@ class CellLine :
     def data(self,track) :
         # TODO: sanity checks
         self._data.append (track)
+
+class Region :
+    def __init__ (self,chromosome,start,end,resolution) :
+        self.chromosome = chromosome
+        self.start = start
+        self.end = end
+        self.resolution = resolution
+        self._data = []
+        self.xvals = np.arange (start,end,resolution)
+    def set_chipseq_track (self,track,q_threshold=None) :
+        """
+        This function passes the 'track' dictionary to the Region class and
+        coarse-grains its values to the Region's xvals. The 'track' must have
+        the structure as given by the CellLine class. The optional argument
+        'q_threshold' can be passed to select the peaks that meet a certain
+        quality threshold.
+        """
+        mytrack = {}
+        for key,val in track.iteritems () :
+            if key != 'data' :
+                mytrack[key] = val
+        mytrack['track'] = np.zeros_like(self.xvals,dtype=np.float64)
+        for peak in track['data'] :
+            if (peak['chr'] == self.chromosome) and\
+               (peak['start'] > self.start)     and\
+               (peak['start'] < self.end) :
+                start = (peak['start']-self.start)/self.resolution
+                if q_threshold is not None :
+                    if peak['q'] < q_threshold :
+                        continue
+                mytrack['track'][start] = peak['val']
+        self._data.append (mytrack)

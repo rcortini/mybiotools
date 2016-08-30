@@ -4,6 +4,6 @@ from .utils import error_message, log_message, warn_message
 from .vistools import myboxplot
 from .hoomdsims import *
 from .nettools import *
-from .cellline import CellLine
+from .cellline import CellLine, Region
 from .beatolabtools import load_beato_metadata,\
                            cell_load_tracks
