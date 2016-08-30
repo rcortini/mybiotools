@@ -83,6 +83,7 @@ class Region :
         self.resolution = resolution
         self._data = []
         self.xvals = np.arange (start,end,resolution)
+        self.N = self.xvals.shape[0]
     def set_chipseq_track (self,track,q_threshold=None) :
         """
         This function passes the 'track' dictionary to the Region class and
@@ -105,6 +106,31 @@ class Region :
                     if peak['q'] < q_threshold :
                         continue
                 mytrack['track'][start] = peak['val']
+        self._data.append (mytrack)
+    def set_hic (self,hic) :
+        # sanity check on the consistency of the provided Hi-C data with the
+        # data within the Region
+        if np.sum(hic['data']['start']%self.resolution) != 0 and\
+           np.sum(hic['data']['end']%self.resolution) != 0 :
+            raise ValueError ("Data resolution does not match Region's resolution")
+        mytrack = {}
+        for key,val in hic.iteritems () :
+            if key != 'data' :
+                mytrack[key] = val
+        # now get all the values that correspond to the Region's chromosome and
+        # extension
+        mask = np.logical_and (hic['data']['chr']==self.chromosome,
+                               np.logical_and(hic['data']['start']>self.start,
+                                              hic['data']['end']<self.end))
+        rawH = hic['data'][mask]
+        # set the values of the matrix
+        H = np.zeros((self.N,self.N),dtype=rawH['val'].dtype)
+        for h in rawH :
+            i = (h['start']-self.start)/self.resolution
+            j = (h['end']-self.start)/self.resolution
+            H[i,j] = H[j,i] = h['val']
+        # and finally update the Region's data records
+        mytrack['track'] = H
         self._data.append (mytrack)
     def get_tracks (self,conditions) :
         return select_tracks (self._data,conditions)

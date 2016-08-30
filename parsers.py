@@ -137,6 +137,15 @@ def chromosome_size (name) :
 
 def parse_hic (name) :
     """
-    Parses a Hi-C file. Supposed to be a xls Excel file. (TODO: extend)
+    Parses a Hi-C file.
     """
-    return pd.read_excel(f).as_matrix()
+    if name.endswith ('.xls') or name.endswith('.xlsx') :
+        return pd.read_excel(f).as_matrix()
+    elif name.endswith ('.tsv.gz') or name.endswith ('.tsv') :
+        if 'raw' in name :
+            hic_dtype=np.dtype({'names':['chr','start','end','val'],
+                                'formats':['S12',np.int64,np.int64,np.int64]})
+        else :
+            hic_dtype=np.dtype({'names':['chr','start','end','val'],
+                                'formats':['S12',np.int64,np.int64,np.float64]})
+        return np.genfromtxt(name,dtype=hic_dtype)
