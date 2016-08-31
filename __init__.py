@@ -5,5 +5,5 @@ from .vistools import myboxplot, plot_hic_matrix, line_plot
 from .hoomdsims import *
 from .nettools import *
 from .cellline import CellLine, Region
-from .beatolabtools import load_beato_metadata,\
-                           cell_load_tracks
+from .beatolabtools import load_beato_metadata, load_hic_metadata, \
+                           cell_load_tracks, cell_load_hic
