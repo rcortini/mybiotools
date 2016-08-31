@@ -15,14 +15,17 @@ def myboxplot (ax,data,colors) :
         boxPolygon = Polygon(boxCoords, facecolor=colors[i])
         ax.add_patch(boxPolygon)
 
-def plot_hic_matrix (H,ax,N1,N2,hic_res=2000,offset=0) :
-    n1 = N1/hic_res
-    n2 = N2/hic_res
-    ax.matshow (1-np.log2(H[n1:n2,n1:n2]),
-             cmap=plt.cm.gray,
-             origin='lower',
-             extent=[N1+offset,N2+offset,N1+offset,N2+offset],
-             interpolation='none')
+def plot_hic_matrix (ax,H,start,end,resolution,fmt = "%.1f",scale=1000000) :
+    # plot the matrix on the given ax
+    ax.matshow (1-np.log2(H),cmap=plt.cm.gray,origin='lower',interpolation='none')
+    # fix the ticks
+    ticklabels = []
+    for tick in ax.get_xticks().tolist() :
+        newtick = (start + tick*resolution)/scale
+        ticklabels.append(fmt%newtick)
+    ax.set_xticklabels(ticklabels)
+    ax.set_yticklabels(ticklabels)
+    ax.text (1.0,1.01,'Mb',transform=ax.transAxes)
 
 def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False) :
     if N1 is not None and N2 is not None :
