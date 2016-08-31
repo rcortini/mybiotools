@@ -50,6 +50,7 @@ def cell_load_hic (cell,tracks,resolution,
         metadata = track.to_dict()
         sample_id = track['SAMPLE_ID']
         metadata['type'] = 'hic'
+        metadata['resolution'] = resolution
         d = "%s/samples/%s/downstream"%(xavi_hic_datadir,sample_id)
         metadata['fname'] = None
         if os.path.exists(d) :

@@ -80,39 +80,34 @@ class Region :
         self.chromosome = chromosome
         self.start = start
         self.end = end
-        self.resolution = resolution
         self._data = []
-        self.xvals = np.arange (start,end,resolution)
-        self.N = self.xvals.shape[0]
     def set_chipseq_track (self,track,q_threshold=None) :
         """
         This function passes the 'track' dictionary to the Region class and
-        coarse-grains its values to the Region's xvals. The 'track' must have
-        the structure as given by the CellLine class. The optional argument
-        'q_threshold' can be passed to select the peaks that meet a certain
-        quality threshold.
+        coarse-grains its values to the xvals desired. The 'track' must have
+        the structure as given by the CellLine class, plus an additional
+        parameter 'resolution', which is the coarse-graining parameter. The
+        optional argument 'q_threshold' can be passed to select the peaks that
+        meet a certain quality threshold.
         """
         mytrack = {}
         for key,val in track.iteritems () :
             if key != 'data' :
                 mytrack[key] = val
-        mytrack['track'] = np.zeros_like(self.xvals,dtype=np.float64)
+        resolution = mytrack['resolution']
+        mytrack['xvals'] = np.arange (self.start,self.end,resolution)
+        mytrack['track'] = np.zeros_like (mytrack['xvals'],dtype=np.float64)
         for peak in track['data'] :
             if (peak['chr'] == self.chromosome) and\
                (peak['start'] > self.start)     and\
                (peak['start'] < self.end) :
-                start = (peak['start']-self.start)/self.resolution
+                start = (peak['start']-self.start)/resolution
                 if q_threshold is not None :
                     if peak['q'] < q_threshold :
                         continue
                 mytrack['track'][start] = peak['val']
         self._data.append (mytrack)
     def set_hic (self,hic) :
-        # sanity check on the consistency of the provided Hi-C data with the
-        # data within the Region
-        if np.sum(hic['data']['start']%self.resolution) != 0 and\
-           np.sum(hic['data']['end']%self.resolution) != 0 :
-            raise ValueError ("Data resolution does not match Region's resolution")
         mytrack = {}
         for key,val in hic.iteritems () :
             if key != 'data' :
@@ -124,10 +119,11 @@ class Region :
                                               hic['data']['end']<self.end))
         rawH = hic['data'][mask]
         # set the values of the matrix
-        H = np.zeros((self.N,self.N),dtype=rawH['val'].dtype)
+        N = (self.end-self.start)/mytrack['resolution'] + 1
+        H = np.zeros((N,N),dtype=rawH['val'].dtype)
         for h in rawH :
-            i = (h['start']-self.start)/self.resolution
-            j = (h['end']-self.start)/self.resolution
+            i = (h['start']-self.start)/mytrack['resolution']
+            j = (h['end']-self.start)/mytrack['resolution']
             H[i,j] = H[j,i] = h['val']
         # and finally update the Region's data records
         mytrack['track'] = H
@@ -140,7 +136,7 @@ class Region :
         fig, axes = plt.subplots (n,1,figsize=(10,n*3))
         for i,track in enumerate(selected_tracks) :
             if i==n-1 :
-                line_plot (axes[i],self.xvals,track['track'],show_xaxis=True)
+                line_plot (axes[i],track['xvals'],track['track'],show_xaxis=True)
             else :
-                line_plot (axes[i],self.xvals,track['track'])
+                line_plot (axes[i],track['xvals'],track['track'])
         return fig
