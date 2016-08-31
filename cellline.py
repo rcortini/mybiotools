@@ -115,11 +115,11 @@ class Region :
         # now get all the values that correspond to the Region's chromosome and
         # extension
         mask = np.logical_and (hic['data']['chr']==self.chromosome,
-                               np.logical_and(hic['data']['start']>self.start,
+                               np.logical_and(hic['data']['start']>=self.start,
                                               hic['data']['end']<self.end))
         rawH = hic['data'][mask]
         # set the values of the matrix
-        N = (self.end-self.start)/mytrack['resolution'] + 1
+        N = (self.end-self.start)/mytrack['resolution']
         H = np.zeros((N,N),dtype=rawH['val'].dtype)
         for h in rawH :
             i = (h['start']-self.start)/mytrack['resolution']
