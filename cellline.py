@@ -10,14 +10,16 @@ def select_tracks (tracks,conditions) :
     if not conditions :
         return tracks
     for track in tracks :
+        is_valid = True
         for key,val in conditions.iteritems() :
             try :
                 if track[key] != val :
+                    is_valid = False
                     break
             except KeyError :
+                is_valid = False
                 break
-            # the iteration gets here only if all condition keys exist, and
-            # if the track satisfies all the desired conditions.
+        if is_valid :
             selected_tracks.append(track)
     return selected_tracks
 
@@ -128,7 +130,22 @@ class Region :
         # and finally update the Region's data records
         mytrack['track'] = H
         self._data.append (mytrack)
-    def get_tracks (self,conditions) :
+    def set_data (self,cell,conditions,q_threshold=None) :
+        """
+        This is a convenient way to interface a CellLine instance with a Region
+        instance. You pass the CellLine object 'cell' to this method, along with
+        the given conditions, and the data tracks are added to the Regions's
+        records.
+        """
+        tracks = cell.get_data (conditions)
+        for track in tracks :
+            if track['type'] == 'chipseq' :
+                self.set_chipseq_track(track,q_threshold=q_threshold)
+            elif track['type'] == 'hic' :
+                self.set_hic(track)
+            else :
+                raise ValueError ("Unsupported data type %s"%track['type'])
+    def get_data (self,conditions) :
         return select_tracks (self._data,conditions)
     def plot_tracks (self,conditions) :
         selected_tracks = select_tracks (self._data,conditions)

@@ -12,11 +12,12 @@ def load_hic_metadata (
     hic_metadata_file='/home/rcortini/work/data/beato_lab_hic_metadata.xlsx') :
     return pd.read_excel(hic_metadata_file)
 
-def cell_load_tracks (cell,tracks,xavi_datadir='/mnt/xavi/data') :
+def cell_load_tracks (cell,tracks,resolution=10000,xavi_datadir='/mnt/xavi/data') :
     for i,track in tracks.iterrows() :
         metadata = track.to_dict()
         sample_id = track['SAMPLE_ID']
         metadata['type'] = sample_id.split('_')[-1]
+        metadata['resolution'] = resolution
         # build the directory name where the files are
         d = "%s/%s/samples/%s/peaks"%(xavi_datadir,
                                       metadata['type'],
