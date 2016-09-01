@@ -140,7 +140,7 @@ def parse_hic (name) :
     Parses a Hi-C file.
     """
     if name.endswith ('.xls') or name.endswith('.xlsx') :
-        return pd.read_excel(f).as_matrix()
+        return pd.read_excel(name).as_matrix()
     elif name.endswith ('.tsv.gz') or name.endswith ('.tsv') :
         if 'raw' in name :
             hic_dtype=np.dtype({'names':['chr','start','end','val'],
