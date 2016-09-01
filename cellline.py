@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from .parsers import parse_hic, parse_narrowpeak
 from .vistools import line_plot
+from .utils import warn_message
 
 def select_tracks (tracks,conditions) :
     selected_tracks = []
@@ -56,6 +57,12 @@ class CellLine :
         # sanity check on the metadata: fname exists
         if not os.path.exists (fname) :
             raise IOError ("%s does not exist"%fname)
+        # sanity check on the fact that the same track has not been loaded
+        # already
+        previous = select_tracks(self._data,{'fname':fname})
+        if previous :
+            warn_message('load_track','Track %s already loaded'%fname)
+            return
         # everything's fine: load the data and append the record to the records.
         datadict = metadata.copy()
         datadict['data'] = self.parsers[datatype](fname)
@@ -114,19 +121,22 @@ class Region :
         for key,val in hic.iteritems () :
             if key != 'data' :
                 mytrack[key] = val
-        # now get all the values that correspond to the Region's chromosome and
-        # extension
-        mask = np.logical_and (hic['data']['chr']==self.chromosome,
-                               np.logical_and(hic['data']['start']>=self.start,
-                                              hic['data']['end']<self.end))
-        rawH = hic['data'][mask]
-        # set the values of the matrix
-        N = (self.end-self.start)/mytrack['resolution']
-        H = np.zeros((N,N),dtype=rawH['val'].dtype)
-        for h in rawH :
-            i = (h['start']-self.start)/mytrack['resolution']
-            j = (h['end']-self.start)/mytrack['resolution']
-            H[i,j] = H[j,i] = h['val']
+        try :
+            # now get all the values that correspond to the Region's chromosome and
+            # extension
+            mask = np.logical_and (hic['data']['chr']==self.chromosome,
+                                   np.logical_and(hic['data']['start']>=self.start,
+                                                  hic['data']['end']<self.end))
+            rawH = hic['data'][mask]
+            # set the values of the matrix
+            N = (self.end-self.start)/mytrack['resolution']
+            H = np.zeros((N,N),dtype=rawH['val'].dtype)
+            for h in rawH :
+                i = (h['start']-self.start)/mytrack['resolution']
+                j = (h['end']-self.start)/mytrack['resolution']
+                H[i,j] = H[j,i] = h['val']
+        except IndexError :
+            H = hic['data']
         # and finally update the Region's data records
         mytrack['track'] = H
         self._data.append (mytrack)
@@ -157,3 +167,10 @@ class Region :
             else :
                 line_plot (axes[i],track['xvals'],track['track'])
         return fig
+    @property
+    def data(self) :
+        return self._data
+    @data.setter
+    def data(self,track) :
+        # TODO: sanity check
+        self._data.append (track)
