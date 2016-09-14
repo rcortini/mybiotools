@@ -6,6 +6,26 @@ from .parsers import parse_hic, parse_narrowpeak
 from .vistools import line_plot
 from .utils import warn_message
 
+def region_chipseq (track,chromosome,start,end,resolution,q_threshold=None) :
+    """
+    This function is a fundamental component that allows to map the chipseq
+    track to a particular chromosome region, at a given resolution. Optional
+    'q_threshold' parameter tells whether a threshold on the peak quality should
+    be applied.
+    """
+    x = np.arange (start,end,resolution)
+    y = np.zeros_like (x,dtype=np.float64)
+    for peak in track['data'] :
+        if (peak['chr'] == chromosome) and\
+           (peak['start'] > start)     and\
+           (peak['start'] < end) :
+            start = (peak['start']-start)/resolution
+            if q_threshold is not None :
+                if peak['q'] < q_threshold :
+                    continue
+            y[start] = peak['val']
+    return x,y
+
 def select_tracks (tracks,conditions) :
     selected_tracks = []
     if not conditions :
@@ -90,7 +110,7 @@ class Region :
         self.start = start
         self.end = end
         self._data = []
-    def set_chipseq_track (self,track,q_threshold=None) :
+    def set_chipseq_track (self,track,resolution,q_threshold=None) :
         """
         This function passes the 'track' dictionary to the Region class and
         coarse-grains its values to the xvals desired. The 'track' must have
@@ -103,18 +123,11 @@ class Region :
         for key,val in track.iteritems () :
             if key != 'data' :
                 mytrack[key] = val
-        resolution = mytrack['resolution']
-        mytrack['xvals'] = np.arange (self.start,self.end,resolution)
-        mytrack['track'] = np.zeros_like (mytrack['xvals'],dtype=np.float64)
-        for peak in track['data'] :
-            if (peak['chr'] == self.chromosome) and\
-               (peak['start'] > self.start)     and\
-               (peak['start'] < self.end) :
-                start = (peak['start']-self.start)/resolution
-                if q_threshold is not None :
-                    if peak['q'] < q_threshold :
-                        continue
-                mytrack['track'][start] = peak['val']
+        mytrack['xvals'], mytrack['track'] = region_chipseq (track,
+                                                             self.chromosome,
+                                                             self.start,
+                                                             self.end,
+                                                             resolution)
         self._data.append (mytrack)
     def set_hic (self,hic) :
         mytrack = {}
