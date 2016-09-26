@@ -1,7 +1,7 @@
 from .parsers import parse_sam, parse_broadpeak, parse_narrowpeak,\
                     load_hic_Rao, parse_hic, res_string
 from .utils import error_message, log_message, warn_message
-from .vistools import myboxplot, plot_hic_matrix, line_plot
+from .vistools import myboxplot, plot_hic_matrix, line_plot, ax_only_y
 from .hoomdsims import *
 from .nettools import *
 from .cellline import CellLine, Region, region_chipseq, region_hic

@@ -27,6 +27,16 @@ def plot_hic_matrix (ax,H,start,end,resolution,fmt = "%.1f",scale=1000000) :
     ax.set_yticklabels(ticklabels)
     ax.text (1.0,1.01,'Mb',transform=ax.transAxes)
 
+def ax_only_y (ax,show_xaxis=False) :
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.get_yaxis().tick_left()
+    if not show_xaxis :
+        ax.get_xaxis().set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+    else :
+        ax.get_xaxis().tick_bottom()
+
 def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False) :
     if N1 is not None and N2 is not None :
         ax.set_xlim (N1,N2)
@@ -43,11 +53,4 @@ def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False) :
     delta = ymax-ymin
     ax.set_ylim (ymin-0.01*delta,ymax+0.01*delta)
     # plot style
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.get_yaxis().tick_left()
-    if not show_xaxis :
-        ax.get_xaxis().set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-    else :
-        ax.get_xaxis().tick_bottom()
+    ax_only_y (ax,show_xaxis)
