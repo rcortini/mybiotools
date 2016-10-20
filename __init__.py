@@ -7,3 +7,4 @@ from .nettools import *
 from .cellline import CellLine, Region, region_chipseq, region_hic
 from .beatolabtools import load_beato_metadata, load_hic_metadata, \
                            cell_load_tracks, cell_load_hic
+from .moremath import autocorrelation
