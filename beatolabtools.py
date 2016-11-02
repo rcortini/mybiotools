@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 from .utils import warn_message
-from .parsers import res_string
+from .parsers import res_string, parse_kallisto_rnaseq
 
 def load_beato_metadata (
     metadata_file='/home/rcortini/work/data/beato_lab_metadata.xlsx') :
@@ -64,3 +64,18 @@ def cell_load_hic (cell,tracks,resolution,
             cell.load_track(metadata)
         else :
             warn_message('cell_load_hic','Data not found for %s'%sample_id)
+
+def load_rnaseq (sample_id,xavi_datadir='/mnt/xavi/data') :
+    # build directory name
+    rnaseq_datadir = '%s/rnaseq/samples'%xavi_datadir
+    this_datadir = '%s/%s/quantifications/kallisto/'%(rnaseq_datadir,sample_id)
+    # search for our file in the directory
+    fname = None
+    for root,sub,files in os.walk(this_datadir) :
+        for f in files :
+            if f=='abundance.tsv' :
+                fname = '%s/abundance.tsv'%root
+    # check that the file was found
+    if fname is not None :
+        ref_genome = fname.replace(this_datadir,'').replace('/paired_end/abundance.tsv','')
+    return parse_kallisto_rnaseq(fname), ref_genome

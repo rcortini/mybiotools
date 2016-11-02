@@ -149,3 +149,16 @@ def parse_hic (name) :
             hic_dtype=np.dtype({'names':['chr','start','end','val'],
                                 'formats':['S12',np.int64,np.int64,np.float64]})
         return np.genfromtxt(name,dtype=hic_dtype)
+
+def parse_kallisto_rnaseq (name) :
+    """
+    Parses an annotated tsv file that was the output of Kallisto.
+    """
+    kallisto_dtype = np.dtype([
+            ('target_id','S2048'),
+            ('length',np.int64),
+            ('eff_length',np.float64),
+            ('est_counts',np.float64),
+            ('tpm',np.float64)
+        ])
+    return np.genfromtxt(name,dtype=kallisto_dtype,skip_header=1)
