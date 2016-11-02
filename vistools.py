@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import matplotlib.gridspec as gridspec
+from scipy.stats import gaussian_kde
 
 def myboxplot (ax,data,colors) :
     bp = ax.boxplot(data, 1, '')
@@ -54,3 +55,20 @@ def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False) :
     ax.set_ylim (ymin-0.01*delta,ymax+0.01*delta)
     # plot style
     ax_only_y (ax,show_xaxis)
+
+def color_density_scatter (ax,x,y) :
+    """
+    Calculate the gaussian kernel density of the points that we want to look at:
+    this way we will be able to color-code the points on the plot by the
+    density of the neighbouring points. Taken from
+    http://stackoverflow.com/a/20107592/2312821
+    Then return the scatter plot color-coded correspondingly.
+    """
+    # first calculate the Gaussian kernel density
+    xy = np.vstack([x,y])
+    z = gaussian_kde(xy)(xy)
+    # we need then to sort the output, so that the points with highest density
+    # will be plotted last
+    idx = z.argsort()
+    x,y,z = x[idx],y[idx],z[idx]
+    ax.scatter(x,y,c=np.log(z),s=10,edgecolor='')
