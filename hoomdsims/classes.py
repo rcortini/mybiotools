@@ -93,3 +93,19 @@ class hoomdsim :
         for contact in contact_trace :
             d = np.concatenate ((d,np.abs(np.ediff1d (contact))))
         self.d_dist = np.histogram (d,bins=nbins,normed=True)
+
+    def calculate_tracer_msd (self,tracer_text,teq,tsample) :
+        u = self.u
+        tracers = u.select_atoms (tracer_text)
+        ntracers = tracers.n_atoms
+        ts = u.trajectory[teq]
+        pos0 = tracers.positions
+        traj_slice = u.trajectory[teq::tsample]
+        # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
+        nslice = sum(1 for _ in traj_slice)
+        sd_t = np.zeros ((nslice,ntracers))
+        for i,ts in enumerate(u.trajectory[teq::tsample]) :
+            pos = tracers.positions
+            for j in range(ntracers) :
+                sd_t[i,j] = np.sum((pos[j]-pos0[j])**2)
+        self.msd_t = np.mean (sd_t,axis=1)
