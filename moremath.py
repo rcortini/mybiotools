@@ -10,3 +10,12 @@ def autocorrelation (x) :
     p = np.array([np.real(v)**2+np.imag(v)**2 for v in f])
     pi = np.fft.ifft(p)
     return np.real(pi)[:x.size/2]/np.sum(xp**2)
+
+def linear_fit (x,y) :
+    """
+    Fit (x,y) to a linear function, using unweighted least-square minimization
+    procedure from numpy linear algebra. Returns the coefficients a and b of y =
+    a + b x
+    """
+    A = np.vstack([x, np.ones(x.size)]).T
+    return np.linalg.lstsq(A,y)[0]
