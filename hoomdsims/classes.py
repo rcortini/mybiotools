@@ -5,7 +5,7 @@ from MDAnalysis.analysis.distances import contact_matrix, distance_array
 class hoomdsim :
     def __init__ (self,xml,dcd=None) :
         if dcd is not None :
-            u = mda.Universe (xml,dcd)
+            u = mda.Universe (xml,dcd,format='DCD')
         else :
             u = mda.Universe (xml)
         self.u = u
