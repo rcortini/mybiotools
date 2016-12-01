@@ -4,6 +4,7 @@ from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import matplotlib.gridspec as gridspec
 from scipy.stats import gaussian_kde
+import itertools
 
 def myboxplot (ax,data,colors) :
     bp = ax.boxplot(data, 1, '')
@@ -72,3 +73,17 @@ def color_density_scatter (ax,x,y) :
     idx = z.argsort()
     x,y,z = x[idx],y[idx],z[idx]
     ax.scatter(x,y,c=np.log(z),s=10,edgecolor='')
+
+def plot_triangular_matrix (ax,C):
+    n = C.shape[0]
+    t = np.array([[1,0.5],[-1,0.5]])
+    A = np.dot(np.array([(i[1],i[0]) 
+               for i in itertools.product(range(n,-1,-1),range(0,n+1,1))]),t)
+    ax.pcolormesh(A[:,1].reshape(n+1,n+1),A[:,0].reshape(n+1,n+1),np.flipud(C),
+                 cmap=plt.cm.gray)
+    ax.set_ylim(0,n)
+    ax.set_frame_on(False)
+    plt.tick_params(which='both',length=0)
+    ax.add_artist(Line2D((0,n/2),(0,n),color='k',linewidth=1))
+    ax.add_artist(Line2D((n,n/2),(0,n),color='k',linewidth=1))
+    ax.set_yticklabels([])
