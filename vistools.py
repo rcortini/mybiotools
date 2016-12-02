@@ -39,7 +39,8 @@ def ax_only_y (ax,show_xaxis=False) :
     else :
         ax.get_xaxis().tick_bottom()
 
-def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False) :
+def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False,
+               color='k') :
     if N1 is not None and N2 is not None :
         ax.set_xlim (N1,N2)
         mask = np.logical_and(xvals>N1,xvals<N2)
@@ -48,7 +49,7 @@ def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False) :
         mask = np.ones_like(xvals,dtype=bool)
     # plot values
     for x,y in zip(xvals[mask],yvals[mask]) :
-        ax.add_artist(Line2D((x,x),(0,y),color='k',linewidth=1))
+        ax.add_artist(Line2D((x,x),(0,y),color=color,linewidth=1))
     # plot borders
     ymin = min(yvals)
     ymax = max(yvals)
