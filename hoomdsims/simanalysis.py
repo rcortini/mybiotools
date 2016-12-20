@@ -47,3 +47,16 @@ def contacts_with (sim,polymer_text,tracers_text,bindingsites_text,teq,tsample,t
         if cA != 0 :
             c.append ((cB/cA) / (float(bs_n)/nbs_n))
     return np.mean(np.array(c))
+
+def fit_msd (msd) :
+    """
+    Perform a simple fit of the supplied time-dependent MSD, using a linear
+    regression of the logarithms of the values.
+    """
+    # prepare the values to fit: exclude the first value because it is zero
+    x = np.log(np.arange(1,msd.size))
+    y = np.log(msd[1:])
+
+    # perform fit and return: y = ax + b
+    b,a = mbt.linear_fit(x,y)
+    return b,a
