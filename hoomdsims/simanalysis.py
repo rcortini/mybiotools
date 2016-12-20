@@ -1,5 +1,6 @@
 import numpy as np
 from MDAnalysis.analysis.distances import distance_array
+import mybiotools as mbt
 
 def hic_chipseq_r2 (hic, chipseq) :
     """
