@@ -9,8 +9,15 @@ sim_base_name = 'sbs_tracers'
 # simulation variables
 nsims = 10
 N = 1024
+nframes = 10000
 phivals = np.loadtxt('%s/phi_vals'%(sim_root_dir))
 evals = np.loadtxt('%s/e_vals'%(sim_root_dir))
+
+# units of measure
+scale_l = 1.5e-6                                  # cm
+scale_m = 5.73e-18                                # g
+scale_e = 4.1e-14                                 # erg
+scale_t = scale_l * np.sqrt(scale_m/scale_e)      # s
 
 def sim_name (phi,e,n) :
     """
