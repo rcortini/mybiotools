@@ -12,6 +12,8 @@ N = 1024
 nframes = 10000
 phivals = np.loadtxt('%s/phi_vals'%(sim_root_dir))
 evals = np.loadtxt('%s/e_vals'%(sim_root_dir))
+dt = 0.005
+dcd_freq = 10000
 
 # units of measure
 scale_l = 1.5e-6                                  # cm
