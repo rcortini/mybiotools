@@ -49,15 +49,19 @@ def contacts_with (sim,polymer_text,tracers_text,bindingsites_text,teq,tsample,t
             c.append ((cB/cA) / (float(bs_n)/nbs_n))
     return np.mean(np.array(c))
 
-def fit_msd (msd) :
+def fit_msd (msd,delta_t,scale_l) :
     """
     Perform a simple fit of the supplied time-dependent MSD, using a linear
-    regression of the logarithms of the values.
+    regression of the logarithms of the values. User must supply the conversion
+    factor from time to real time and from length to real length
     """
     # prepare the values to fit: exclude the first value because it is zero
-    x = np.log(np.arange(1,msd.size))
-    y = np.log(msd[1:])
-
-    # perform fit and return: y = ax + b
-    b,a = mbt.linear_fit(x,y)
-    return b,a
+    t = np.arange(msd.size)*delta_t
+    x = np.log(t[1:])
+    y = np.log(msd[1:]*scale_l**2)
+    # perform fit to y = ax + b with their errors
+    b,a,db,da = mbt.linear_regression (x,y,0.99)
+    # now convert the value of b into a diffusion coefficient
+    D = np.exp(b)/6.0
+    dD = np.exp(db)/6.0
+    return a,da,D,dD
