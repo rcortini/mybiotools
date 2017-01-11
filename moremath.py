@@ -47,3 +47,31 @@ def linear_regression (x,y,prob) :
     bb1 = c * (s2 / ((n-2) * (xxmean - (xmean)**2)))**.5
     bb0 = c * ((s2 / (n-2)) * (1 + (xmean)**2 / (xxmean - xmean**2)))**.5
     return b0,b1,bb0,bb1
+
+def wlinear_fit (x,y,w) :
+    """
+    Fit (x,y,w) to a linear function, using exact formulae for weighted linear
+    regression. This code was translated from the GNU Scientific Library (GSL),
+    it is an exact copy of the function gsl_fit_wlinear.
+    """
+    # compute the weighted means and weighted deviations from the means
+    # wm denotes a "weighted mean", wm(f) = (sum_i w_i f_i) / (sum_i w_i) */
+    mask = [w>0]
+    W = np.sum(w[mask])
+    wm_x = np.average(x,weights=w)
+    wm_y = np.average(y,weights=w)
+    dx = x-wm_x
+    dy = y-wm_y
+    wm_dx2 = np.average(dx**2,weights=w)
+    wm_dxdy = np.average(dx*dy,weights=w)
+    # In terms of y = a + b x
+    d2 = 0.0
+    b = wm_dxdy / wm_dx2
+    a = wm_y - wm_x*b
+    cov_00 = (1.0/W) * (1.0 + wm_x**2/wm_dx2)
+    cov_11 = 1.0 / (W*wm_dx2)
+    cov_01 = -wm_x / (W*wm_dx2)
+    # Compute chi^2 = \sum w_i (y_i - (a + b * x_i))^2
+    chi2 = np.sum (w * (y-(a+b*x))**2)
+    return a,b,cov_00,cov_11,cov_01,chi2
+
