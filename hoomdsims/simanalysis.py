@@ -67,3 +67,36 @@ def fit_msd (msd,cutoff,delta_t,scale_l) :
     D = np.exp(b)/6.0
     dD = np.exp(db)/6.0
     return a,da,D,dD
+
+def msd_t (sim,particles_text,teq,tsample) :
+    """
+    Calculate the mean square displacement of the particles defined by
+    'particles_text' in simulation sim, using sampling tsample and equilibration
+    time teq. Returns the matrix corresponding to the mean square displacement
+    of each particle, along with a matrix corresponding to the variance in the
+    estimate of this quantity.
+    """
+    u = sim.u
+    particles = u.select_atoms (particles_text)
+    nparticles = particles.n_atoms
+    # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
+    traj_slice = u.trajectory[teq::tsample]
+    nslice = sum(1 for _ in traj_slice)
+    # initialize the matrix containing all the positions
+    # of the particles at all the sampling frames
+    particles_pos = np.zeros ((nslice,nparticles,3))
+    for i,ts in enumerate(u.trajectory[teq::tsample]) :
+        particles_pos[i,:,:] = particles.positions
+    # now initialize the Delta matrix, which contains the
+    # squared differences between the particles' positions
+    # at different time delays
+    Nt = int(nslice/2)
+    Delta = np.zeros((nparticles,Nt,Nt))
+    for delay in xrange(1,Nt+1) :
+        for t0 in xrange (Nt) :
+            t1 = t0 + delay
+            pos1 = particles_pos[t1,:,:]
+            pos0 = particles_pos[t0,:,:]
+            Delta[:,delay-1,t0] = np.sum((pos1-pos0)**2,axis=1)
+    # return the matrices of MSD and its variance
+    return np.mean(Delta,axis=2),np.var(Delta,axis=2)
