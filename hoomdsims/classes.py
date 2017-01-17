@@ -1,6 +1,7 @@
 import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis.distances import contact_matrix, distance_array
+from . import simanalysis
 
 class hoomdsim :
     def __init__ (self,xml,dcd=None) :
@@ -95,30 +96,4 @@ class hoomdsim :
         self.d_dist = np.histogram (d,bins=nbins,normed=True)
 
     def calculate_tracer_msd (self,tracer_text,teq,tsample) :
-        # initialize universe, tracers selection
-        u = self.u
-        tracers = u.select_atoms (tracer_text)
-        ntracers = tracers.n_atoms
-        # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
-        traj_slice = u.trajectory[teq::tsample]
-        nslice = sum(1 for _ in traj_slice)
-        # initialize the matrix containing all the positions
-        # of the tracers at all the sampling frames
-        tracers_pos = np.zeros ((nslice,ntracers,3))
-        for i,ts in enumerate(u.trajectory[teq::tsample]) :
-            tracers_pos[i,:,:] = tracers.positions
-        # now initialize the Delta matrix, which contains the
-        # squared differences between the tracers' positions
-        # at different time delays
-        Nt = int(nslice/2)
-        Delta = np.zeros((ntracers,Nt,Nt))
-        for delay in xrange(1,Nt+1) :
-            for t0 in xrange (Nt) :
-                t1 = t0 + delay
-                pos1 = tracers_pos[t1,:,:]
-                pos0 = tracers_pos[t0,:,:]
-                Delta[:,delay-1,t0] = np.sum((pos1-pos0)**2,axis=1)
-        # first calculate the mean over the tracers
-        msd_average_tracers = np.mean(Delta,axis=0)
-        # then calculate the mean over the starting points
-        self.msd_t = np.mean(msd_average_tracers,axis=1)
+        self.msd_t = simanalysis.msd_t (self,tracer_text,teq,tsample)
