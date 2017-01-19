@@ -120,7 +120,7 @@ def dmin_sel (sim,sel1_text,sel2_text,teq,tsample) :
     sel2 = sim.u.select_atoms (sel2_text)
     # get number of atoms in selection 1
     natoms = sel1.n_atoms
-    nslice = traj_nslice (u,teq,tsample)
+    nslice = traj_nslice (sim.u,teq,tsample)
     dmin = np.zeros((natoms,nslice))
     for i,ts in enumerate(sim.u.trajectory[teq::tsample]) :
         d = distance_array (sel1.positions,sel2.positions,
