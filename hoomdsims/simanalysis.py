@@ -2,6 +2,15 @@ import numpy as np
 from MDAnalysis.analysis.distances import distance_array
 import mybiotools as mbt
 
+def traj_nslice (u,teq,tsample) :
+    """
+    Returns the number of frames in the trajectory in universe u, using teq as
+    equilibration time and tsample as sampling time
+    """
+    # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
+    traj_slice = u.trajectory[teq::tsample]
+    return sum(1 for _ in traj_slice)
+
 def hic_chipseq_r2 (hic, chipseq) :
     """
     Calculate the Pearson correlation coefficient between the row sum of the
@@ -79,9 +88,7 @@ def msd_t (sim,particles_text,teq,tsample) :
     u = sim.u
     particles = u.select_atoms (particles_text)
     nparticles = particles.n_atoms
-    # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
-    traj_slice = u.trajectory[teq::tsample]
-    nslice = sum(1 for _ in traj_slice)
+    nslice = traj_nslice (u,teq,tsample)
     # initialize the matrix containing all the positions
     # of the particles at all the sampling frames
     particles_pos = np.zeros ((nslice,nparticles,3))
@@ -113,9 +120,7 @@ def dmin_sel (sim,sel1_text,sel2_text,teq,tsample) :
     sel2 = sim.u.select_atoms (sel2_text)
     # get number of atoms in selection 1
     natoms = sel1.n_atoms
-    # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
-    traj_slice = sim.u.trajectory[teq::tsample]
-    nslice = sum(1 for _ in traj_slice)
+    nslice = traj_nslice (u,teq,tsample)
     dmin = np.zeros((natoms,nslice))
     for i,ts in enumerate(sim.u.trajectory[teq::tsample]) :
         d = distance_array (sel1.positions,sel2.positions,
