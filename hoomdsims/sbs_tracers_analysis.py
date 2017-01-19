@@ -5,6 +5,7 @@ import mybiotools as mbt
 # general variables that are used throughout the calculations
 sim_root_dir = os.getenv('HOME')+'/work/data/hoomd/sbs_tracers/production/2016-10-24'
 sim_base_name = 'sbs_tracers'
+data_dir = '%s/../../data'%(sim_root_dir)
 
 # simulation variables
 nsims = 10
