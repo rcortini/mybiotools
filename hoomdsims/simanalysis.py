@@ -100,3 +100,25 @@ def msd_t (sim,particles_text,teq,tsample) :
             Delta[:,delay-1,t0] = np.sum((pos1-pos0)**2,axis=1)
     # return the matrices of MSD and its variance
     return np.mean(Delta,axis=2),np.var(Delta,axis=2)
+
+def dmin_sel (sim,sel1_text,sel2_text,teq,tsample) :
+    """
+    Calculate the minimum distance between the atoms defined in sel1 and the
+    atoms defined in sel2, as a function of time. Returns a matrix that contains
+    the minimum distance for each atom defined in sel1. As usual user should
+    supply equilibration time, sampling time, and contact threshold value.
+    """
+    # define atom selections
+    sel1 = sim.u.select_atoms (sel1_text)
+    sel2 = sim.u.select_atoms (sel2_text)
+    # get number of atoms in selection 1
+    natoms = sel1.n_atoms
+    # get the number of frames in the slice (http://stackoverflow.com/a/7223557)
+    traj_slice = sim.u.trajectory[teq::tsample]
+    nslice = sum(1 for _ in traj_slice)
+    dmin = np.zeros((natoms,nslice))
+    for i,ts in enumerate(sim.u.trajectory[teq::tsample]) :
+        d = distance_array (sel1.positions,sel2.positions,
+                            box=ts.dimensions)
+        dmin[:,i] = d.min(axis=1)
+    return dmin
