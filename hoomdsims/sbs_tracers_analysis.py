@@ -37,6 +37,17 @@ def sim_directory(sim_root_dir,phi,e,n) :
     basename, simname = sim_name(phi,e,n)
     return '%s/%s/%s'%(sim_root_dir,basename,simname)
 
+def load_sim(sim_root_dir,phi,e,n) :
+    """
+    Returns a loaded simulation corresponding to the given simulation
+    parameters.
+    """
+    basename, simname = sim_name(phi,e,n)
+    simdir = sim_directory(sim_root_dir,phi,e,n)
+    xml = '%s/%s.xml'%(simdir,simname)
+    dcd = '%s/%s.dcd'%(simdir,simname)
+    return mbt.hoomdsim (xml,dcd)
+
 class sbs_tracers_sim :
     """
     This class allows to load the data of the simulations. It is conceived so
