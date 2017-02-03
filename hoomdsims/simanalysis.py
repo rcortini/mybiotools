@@ -127,3 +127,16 @@ def dmin_sel (sim,sel1_text,sel2_text,teq,tsample) :
                             box=ts.dimensions)
         dmin[:,i] = d.min(axis=1)
     return dmin
+
+def particle_images (sim,frame_id) :
+    """
+    Get the image index of all particles in simulation, at the frame 'frame_id'
+    """
+    # get positions of all particles: define first the atom selection, then jump to
+    # the user-requested trajectory frame, get the box dimensions (currently works
+    # only for orthorhombic boxes, then calculate the image indices
+    atoms = sim.u.select_atoms ('all')
+    ts = sim.u.trajectory[frame_id]
+    L = ts.dimensions[:3]
+    pos = atoms.positions + L/2.
+    return pos//L
