@@ -1,8 +1,8 @@
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
-import besselzeros
 from scipy.special import gamma, jv
 from scipy.linalg import eig
+from mybiotools import error_message
 
 def row_normalize_matrix (M) :
     """
@@ -109,6 +109,11 @@ def GFPT_theory (T,nu) :
         # non-compact case
         return np.exp(-T)
     else :
+        try :
+            import besselzeros
+        except ImportError :
+            error_message ("GFPT_theory","Could not import besselzeros module")
+            return np.zeros_like (T)
         # compact case
         nterms = 100
         A = 2.0*(1-nu**2)/nu
