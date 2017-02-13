@@ -140,3 +140,37 @@ def particle_images (sim,frame_id) :
     L = ts.dimensions[:3]
     pos = atoms.positions + L/2.
     return pos//L
+
+def jumping_matrix (sim,polymer_text,tracer_text,teq,tsample,threshold) :
+    """
+    Calculate the matrix that represents the number of times that the tracers
+    (defined by 'tracer_text') jump from one site to another site of the polymer
+    (defined by 'polymer_text'). The simulation 'sim' is sampled at 'tsample',
+    excluding the first 'teq' time frames. Contact between a tracer and the
+    polymer is defined by the distance being smaller than 'threshold'.
+    """
+    # define polymer and tracers
+    u = sim.u
+    polymer = u.select_atoms(polymer_text)
+    tracers = u.select_atoms(tracer_text)
+    n_polymer = polymer.n_atoms
+    n_tracers = tracers.n_atoms
+    # initialize jumping matrix and first distance matrix d_prev
+    J = np.zeros ((n_polymer,n_polymer),dtype=np.int32)
+    ts = u.trajectory [teq]
+    d_prev = distance_array (polymer.positions,tracers.positions,
+                            box=ts.dimensions)
+    D_prev = d_prev<threshold
+    for ts in u.trajectory [teq::tsample] :
+        # get distance matrix at current time step
+        d_next = distance_array (polymer.positions,tracers.positions,
+                            box=ts.dimensions)
+        D_next = d_next<threshold
+        # get jumps of all tracers and add it to the jumping matrix
+        for i in xrange (n_tracers) :
+            t_prev = D_prev [:,i]
+            t_next = D_next [:,i].reshape ((n_polymer,1))
+            t = t_prev * t_next
+            J += t
+        D_prev = D_next.copy()
+    return J
