@@ -2,28 +2,8 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from scipy.special import gamma, jv
 from scipy.linalg import eig
+from .random_walks import jump_to
 from mybiotools import error_message
-
-def row_normalize_matrix (M) :
-    """
-    From the matrix M, return the matrix M', defined as
-    M'_ij = M_ij/sum_k(M_ik)
-    """
-    n = np.sum (M,axis=1)
-    N = M.shape [0]
-    Mnorm = M.copy ()
-    for i in range (N) :
-        if n[i]!=0. :
-            Mnorm[i] /= n[i]
-    return Mnorm
-
-
-def jump_to (p):
-    """
-    Select a site according to the probability vector p
-    """
-    value = np.random.random ()
-    return np.argmax (value-p<0.)
 
 def FPT (P,startsite,endsite) :
     """

@@ -1,5 +1,7 @@
+from .random_walks import jump_to, row_normalize_matrix, random_walk, \
+        occupancy, occupancy_theory, adjacency
 from .fpttools import FPT, FPT_distribution,\
-        GFPT, MFPT, GFPT_theory, row_normalize_matrix, GMFPT_theory
+        GFPT, MFPT, GFPT_theory, GMFPT_theory
 from .sierpinski import SierpinskiGasket
 from .cubic import CubicLattice
 from .square import SquareLattice
