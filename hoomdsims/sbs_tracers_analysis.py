@@ -46,7 +46,14 @@ def load_sim(sim_root_dir,phi,e,n) :
     simdir = sim_directory(sim_root_dir,phi,e,n)
     xml = '%s/%s.xml'%(simdir,simname)
     dcd = '%s/%s.dcd'%(simdir,simname)
-    return mbt.hoomdsim (xml,dcd)
+    sim = mbt.hoomdsim (xml,dcd)
+    sim.phi = phi
+    sim.e = e
+    sim.n = n
+    sim.basename = basename
+    sim.simname = simname
+    sim.simdir = simdir
+    return sim
 
 class sbs_tracers_sim :
     """
