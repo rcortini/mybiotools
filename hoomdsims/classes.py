@@ -34,7 +34,7 @@ class hoomdsim :
         self.hic = hic
 
     def calculate_chipseq (self,polymer_text,tracer_text,teq,tsample,
-                           threshold=2.5) :
+                           threshold=2.5,aggregate=True) :
         """
         Calculates the 'ChIP-seq' profile of the tracers' contacts with the
         polymer. Users should provide the text to select the particles that
@@ -51,12 +51,15 @@ class hoomdsim :
         polymer = u.select_atoms (polymer_text)
         ntracers = tracers.n_atoms
         N = polymer.n_atoms
-        chip_seq = np.zeros (N,dtype=int)
+        chip_seq = np.zeros ((N,ntracers),dtype=int)
         for ts in u.trajectory[teq::tsample] :
             d = distance_array (polymer.positions,tracers.positions,
                                 box=ts.dimensions)
-            chip_seq += np.sum (d<threshold,axis=1)
-        self.chip_seq = chip_seq
+            chip_seq += d<threshold
+        if aggregate :
+            self.chip_seq = np.sum (chip_seq,axis=1)
+        else :
+            self.chip_seq = chip_seq
 
     def calculate_contact_trace (self,polymer_text,tracer_text,teq,tsample,
                                  threshold=2.5,nbins=50) :
