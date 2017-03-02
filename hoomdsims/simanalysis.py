@@ -174,3 +174,23 @@ def jumping_matrix (sim,polymer_text,tracer_text,teq,tsample,threshold) :
             J += t
         D_prev = D_next.copy()
     return J
+
+def contacts_t (sim,polymer_text,tracer_text,teq,tsample,threshold) :
+    """
+    For the simulation 'sim', calculate the matrix of binding events of the
+    polymer and the tracers. Returns a contacts matrix of the shape
+    (ntracers,nslice,npolymer).
+    """
+    u = sim.u
+    polymer = u.select_atoms (polymer_text)
+    tracers = u.select_atoms (tracer_text)
+    ntracers = tracers.n_atoms
+    npolymer = polymer.n_atoms
+    nslice = mbt.traj_nslice(u,teq,tsample)
+    C = np.zeros((ntracers,nslice,npolymer),dtype=bool)
+    for i,ts in enumerate(u.trajectory [teq::tsample]) :
+        d = distance_array (tracers.positions,polymer.positions,
+                            box=ts.dimensions)
+        c = d<threshold
+        C[:,i,:] = c
+    return C
