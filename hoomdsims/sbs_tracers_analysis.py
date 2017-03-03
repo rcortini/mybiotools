@@ -10,6 +10,7 @@ data_dir = '%s/../../analysis/data'%(sim_root_dir)
 # simulation variables
 nsims = 10
 N = 1024
+ntracers = 10
 nframes = 10000
 phivals = np.loadtxt('%s/phi_vals'%(sim_root_dir))
 evals = np.loadtxt('%s/e_vals'%(sim_root_dir))
