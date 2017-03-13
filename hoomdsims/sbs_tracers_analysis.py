@@ -3,17 +3,17 @@ import os
 import mybiotools as mbt
 
 # general variables that are used throughout the calculations
-sim_root_dir = os.getenv('HOME')+'/work/data/hoomd/sbs_tracers/production/2016-10-24'
+root_dir = os.getenv('HOME')+'/work/data/hoomd/sbs_tracers'
+production_dir = '%s/production'%root_dir
 sim_base_name = 'sbs_tracers'
-data_dir = '%s/../../analysis/data'%(sim_root_dir)
 
 # simulation variables
-nsims = 10
 N = 1024
 ntracers = 10
 nframes = 10000
-phivals = np.loadtxt('%s/phi_vals'%(sim_root_dir))
-evals = np.loadtxt('%s/e_vals'%(sim_root_dir))
+phivals = np.loadtxt('%s/phi_vals'%(production_dir))
+evals = np.loadtxt('%s/e_vals'%(production_dir))
+nsims = int (np.loadtxt('%s/n_sims'%(production_dir)))
 dt = 0.005
 dcd_freq = 10000
 
@@ -31,20 +31,21 @@ def sim_name (phi,e,n) :
     simname = '%s-%d'%(basename,n)
     return basename, simname
 
-def sim_directory(sim_root_dir,phi,e,n) :
+def sim_directory(run_id,phi,e,n) :
     """
     Returns the directory containing the simulation data
     """
+    sim_root_dir = '%s/%s'%(production_dir,run_id)
     basename, simname = sim_name(phi,e,n)
     return '%s/%s/%s'%(sim_root_dir,basename,simname)
 
-def load_sim(sim_root_dir,phi,e,n) :
+def load_sim(run_id,phi,e,n) :
     """
     Returns a loaded simulation corresponding to the given simulation
     parameters.
     """
     basename, simname = sim_name(phi,e,n)
-    simdir = sim_directory(sim_root_dir,phi,e,n)
+    simdir = sim_directory(run_id,phi,e,n)
     xml = '%s/%s.xml'%(simdir,simname)
     dcd = '%s/%s.dcd'%(simdir,simname)
     sim = mbt.hoomdsim (xml,dcd)
@@ -56,36 +57,9 @@ def load_sim(sim_root_dir,phi,e,n) :
     sim.simdir = simdir
     return sim
 
-class sbs_tracers_sim :
+def data_directory(run_id) :
     """
-    This class allows to load the data of the simulations. It is conceived so
-    that it loads data that is _already_ stored into files on the hard drive. To
-    perform the calculations directly on the trajectory, one should use the
-    'hoomdsim' class, which allows to open the trajectory information.
+    Returns the directory containing the analysis data of the simulations
+    identified by 'run_id'
     """
-    def __init__ (self,sim_root_dir,phi,e,n) :
-        self.phi = phi
-        self.e = e
-        self.n = n
-        basename,simname = sim_name(phi,e,n)
-        simdir = sim_directory(sim_root_dir,phi,e,n)
-        self.chipseq = None
-        self.hic = None
-        chipseq_file = '%s/chipseq.npy'%simdir
-        hic_file = '%s/hic.npy'%simdir
-        if os.path.exists(chipseq_file) and os.path.exists(hic_file) :
-            self.chipseq = np.load('%s/chipseq.npy'%simdir)
-            self.hic = np.load('%s/hic.npy'%simdir)
-
-def load_all_sims () :
-    """
-    Returns a dictionary containing all the simulations, in a way that one can
-    access simulation data using sims[(phi,e,n)].
-    """
-    sims = {}
-    for phi in phivals :
-        for e in evals :
-            mbt.log_message('load_all_sims','Loading (%.2f,%.1f)'%(phi,e))
-            for sim in xrange(1,nsims+1) :
-                sims[(phi,e,sim)] = sbs_tracers_sim(sim_root_dir,phi,e,sim)
-    return sims
+    return '%s/%s/data'%(production_dir,run_id)
