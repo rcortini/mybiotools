@@ -31,11 +31,17 @@ def sim_name (phi,e,n) :
     simname = '%s-%d'%(basename,n)
     return basename, simname
 
+def sim_root_directory(run_id) :
+    """
+    Root directory of the production run
+    """
+    return '%s/%s'%(production_dir,run_id)
+
 def sim_directory(run_id,phi,e,n) :
     """
     Returns the directory containing the simulation data
     """
-    sim_root_dir = '%s/%s'%(production_dir,run_id)
+    sim_root_dir = sim_root_directory(run_id)
     basename, simname = sim_name(phi,e,n)
     return '%s/%s/%s'%(sim_root_dir,basename,simname)
 
@@ -62,4 +68,11 @@ def data_directory(run_id) :
     Returns the directory containing the analysis data of the simulations
     identified by 'run_id'
     """
-    return '%s/%s/data'%(production_dir,run_id)
+    return '%s/data'%(sim_root_directory(run_id))
+
+def figure_directory(run_id) :
+    """
+    Returns the directory containing the figures corresponding to the
+    simulations identified by 'run_id'
+    """
+    return '%s/figures'%(sim_root_directory(run_id))
