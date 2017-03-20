@@ -75,3 +75,5 @@ def wlinear_fit (x,y,w) :
     chi2 = np.sum (w * (y-(a+b*x))**2)
     return a,b,cov_00,cov_11,cov_01,chi2
 
+def KL_divergence (P,Q) :
+    return stats.entropy (P,Q)
