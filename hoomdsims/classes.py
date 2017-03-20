@@ -2,6 +2,7 @@ import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis.distances import contact_matrix, distance_array
 from . import simanalysis
+from mybiotools.moremath import KL_divergence
 
 class hoomdsim :
     def __init__ (self,xml,dcd=None) :
@@ -100,3 +101,36 @@ class hoomdsim :
 
     def calculate_tracer_msd (self,tracer_text,teq,tsample) :
         self.msd_t = simanalysis.msd_t (self,tracer_text,teq,tsample)
+
+    def calculate_r2_KLdiv_t (self,polymer_text,tracer_text,teq,tsample,threshold) :
+        """
+        Calculate r2 and KLdiv for the simulation C and R vectors (virtual
+        ChIP-seq and row sum of virtual Hi-C, as a function of time
+        """
+        # get number of slices in the simulation and init KLdiv_t and r2_t
+        u = self.u
+        nframes = u.trajectory.n_frames
+        nslice = simanalysis.traj_nslice (u,teq,tsample)
+        self.KLdiv_t = np.zeros (nslice)
+        self.r2_t = np.zeros (nslice)
+        # get polymer and tracers
+        polymer = u.select_atoms(polymer_text)
+        tracers = u.select_atoms(tracer_text)
+        npolymer = polymer.n_atoms
+        ntracers = tracers.n_atoms
+        # init C, R, and H vectors
+        C = np.zeros (npolymer)
+        R = np.zeros (npolymer)
+        H = np.zeros ((npolymer,npolymer))
+        # iterate on all frames in slice
+        for i,ts in enumerate(u.trajectory[teq::tsample]) :
+            # ChIP-seq
+            d = distance_array (polymer.positions,tracers.positions,box=ts.dimensions)
+            C += np.sum(d<threshold,axis=1)
+            # Hi-C
+            d = distance_array (polymer.positions,polymer.positions,box=ts.dimensions)
+            H[d<threshold] += 1.0
+            R = H.sum(axis=1)
+            # now calculate KLdiv and r2 at this time point
+            self.KLdiv_t[i] = KL_divergence(C,R)
+            self.r2_t[i] = np.corrcoef(C,R)[0,1]**2
