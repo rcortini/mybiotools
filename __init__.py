@@ -9,4 +9,4 @@ from .cellline import CellLine, Region, region_chipseq, region_hic
 from .beatolabtools import load_beato_metadata, load_hic_metadata, \
                            cell_load_tracks, cell_load_hic, load_rnaseq
 from .moremath import autocorrelation, linear_fit, linear_regression,\
-                      wlinear_fit
+                      wlinear_fit, KL_divergence
