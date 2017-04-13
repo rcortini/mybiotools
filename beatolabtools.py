@@ -47,27 +47,30 @@ def cell_load_tracks (cell,tracks,resolution=10000,xavi_datadir='/mnt/xavi/data'
             metadata['fname'] = fin
             cell.load_track(metadata)
 
+def hic_location(sample_id,resolution,datatype_string='raw',xavi_hic_datadir='/mnt/hic') :
+    d = "%s/samples/%s/downstream"%(xavi_hic_datadir,sample_id)
+    fname = None
+    res = res_string (resolution)
+    if os.path.exists(d) :
+        for root,subdirs,files in os.walk(d) :
+            for f in files :
+                if datatype_string in f and f.endswith ('%s.tsv.gz'%res) :
+                    fname = '%s/%s'%(root,f)
+    if fname is None :
+        warn_message('cell_load_hic','Data not found for %s'%sample_id)
+    return fname
+
 def cell_load_hic (cell,tracks,resolution,
                    datatype_string='raw',
                    xavi_hic_datadir='/mnt/hic') :
-    res = res_string (resolution)
     for i,track in tracks.iterrows() :
         metadata = track.to_dict()
         sample_id = track['SAMPLE_ID']
         metadata['type'] = 'hic'
         metadata['resolution'] = resolution
-        d = "%s/samples/%s/downstream"%(xavi_hic_datadir,sample_id)
-        metadata['fname'] = None
-        if os.path.exists(d) :
-            for root,subdirs,files in os.walk(d) :
-                for f in files :
-                    if datatype_string in f and f.endswith ('%s.tsv.gz'%res) :
-                        fin = '%s/%s'%(root,f)
-                        metadata['fname'] = fin
+        metadata['fname'] = hic_location (sample_id,resolution)
         if metadata['fname'] is not None :
             cell.load_track(metadata)
-        else :
-            warn_message('cell_load_hic','Data not found for %s'%sample_id)
 
 def load_rnaseq (sample_id,xavi_datadir='/mnt/xavi/data') :
     # build directory name
