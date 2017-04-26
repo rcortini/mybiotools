@@ -10,4 +10,4 @@ from .beatolabtools import load_beato_metadata, load_hic_metadata, \
                            cell_load_tracks, cell_load_hic, load_rnaseq,\
                            track_location, hic_location
 from .moremath import autocorrelation, linear_fit, linear_regression,\
-                      wlinear_fit, KL_divergence
+                      wlinear_fit, KL_divergence, LJ_potential

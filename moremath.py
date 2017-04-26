@@ -77,3 +77,9 @@ def wlinear_fit (x,y,w) :
 
 def KL_divergence (P,Q) :
     return stats.entropy (P,Q)
+
+def LJ_potential (r,sigma,epsilon) :
+    """Lennard-Jones potential"""
+    r6 = (sigma/r)**6
+    r12 = r6*r6
+    return 4.0 * epsilon * (r12 - r6)
