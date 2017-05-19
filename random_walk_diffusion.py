@@ -1,10 +1,12 @@
 import numpy as np
 
-def random_spin3d (size=1) :
+def random_spin3d (size=1,seed=None) :
     """
     Generates a random three-dimensional vector, normalized on the
     unit sphere.
     """
+    if seed is not None :
+        np.random.seed(seed)
     phi = 2*np.pi*np.random.random(size=size)
     z = -1.0 + 2.0*np.random.random(size=size)
     s = np.sqrt (1.-z*z)
