@@ -83,3 +83,13 @@ def LJ_potential (r,sigma,epsilon) :
     r6 = (sigma/r)**6
     r12 = r6*r6
     return 4.0 * epsilon * (r12 - r6)
+
+def new_average(N,old_average,new_datapoint) :
+    """
+    Given N observations that have an average 'old_average', returns the new
+    average given a new observation at 'new_datapoint'
+    """
+    if N==0 :
+        return new_datapoint
+    else :
+        return 1.0/(N+1) * (old_average * N + new_datapoint)
