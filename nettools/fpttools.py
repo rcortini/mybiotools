@@ -2,7 +2,7 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from scipy.special import gamma, jv
 from scipy.linalg import eig
-from .random_walks import jump_to
+from .random_walks import jump_to, row_normalize_matrix
 from mybiotools import error_message
 
 def FPT (P,startsite,endsite) :
