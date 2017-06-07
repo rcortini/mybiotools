@@ -136,3 +136,18 @@ def GMFPT_theory (A,weighted=True) :
                 dvi = v[i,j]*dv[i]
                 T[j] += 1.0/l[i]*((2*E)**2*v[i,j]**2 - 2*v[i,j]*2*E*dvi - dvi**2)
         return T/(2*E)
+
+def extend_adjacency_matrix (A0,p_void) :
+    """
+    This function takes the adjacency matrix 'A0' and adds a node to it. The
+    node represents a state that is equally probably reachable from any other
+    node, with probability 'p_void'.
+    """
+    N = A0.shape[0]
+    A = np.zeros((N+1,N+1))
+    A[:N,:N] = A0
+    d_j = np.sum(A0,axis=1)
+    lambda_j = p_void * d_j / (1-p_void)
+    A[N,:-1] = lambda_j
+    A[:-1,N] = lambda_j
+    return A
