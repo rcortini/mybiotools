@@ -75,13 +75,13 @@ def color_density_scatter (ax,x,y) :
     x,y,z = x[idx],y[idx],z[idx]
     ax.scatter(x,y,c=np.log(z),s=10,edgecolor='')
 
-def plot_triangular_matrix (ax,C):
+def plot_triangular_matrix (ax,C,cmap=plt.cm.gray):
     n = C.shape[0]
     t = np.array([[1,0.5],[-1,0.5]])
     A = np.dot(np.array([(i[1],i[0]) 
                for i in itertools.product(range(n,-1,-1),range(0,n+1,1))]),t)
     ax.pcolormesh(A[:,1].reshape(n+1,n+1),A[:,0].reshape(n+1,n+1),np.flipud(C),
-                 cmap=plt.cm.gray)
+                 cmap=cmap)
     ax.set_ylim(0,n)
     ax.set_frame_on(False)
     plt.tick_params(which='both',length=0)
