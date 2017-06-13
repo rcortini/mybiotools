@@ -143,10 +143,10 @@ def parse_hic (name) :
         return pd.read_excel(name).as_matrix()
     elif name.endswith ('.tsv.gz') or name.endswith ('.tsv') :
         if 'raw' in name :
-            hic_dtype=np.dtype({'names':['chr','start','end','val'],
+            hic_dtype=np.dtype({'names':['chr','i','j','val'],
                                 'formats':['S12',np.int64,np.int64,np.int64]})
         else :
-            hic_dtype=np.dtype({'names':['chr','start','end','val'],
+            hic_dtype=np.dtype({'names':['chr','i','j','val'],
                                 'formats':['S12',np.int64,np.int64,np.float64]})
         return np.genfromtxt(name,dtype=hic_dtype)
 
