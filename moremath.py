@@ -93,3 +93,14 @@ def new_average(N,old_average,new_datapoint) :
         return new_datapoint
     else :
         return 1.0/(N+1) * (old_average * N + new_datapoint)
+
+def fit_powerlaw(x,y) :
+    """
+    Given a set of observation y = f(x), fit the data to a power law, and return
+    the amplitude and exponent of the fit.
+    """
+    mask = np.logical_and(x>0,y>0)
+    xfit = np.log(counts[mask])
+    yfit = np.log(y[mask])
+    res = mbt.linear_fit(xfit,yfit)
+    return np.exp(res[1]),res[0]

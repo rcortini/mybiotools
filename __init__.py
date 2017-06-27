@@ -10,5 +10,6 @@ from .beatolabtools import load_beato_metadata, load_hic_metadata, \
                            cell_load_tracks, cell_load_hic, load_rnaseq,\
                            track_location, hic_location
 from .moremath import autocorrelation, linear_fit, linear_regression,\
-                      wlinear_fit, KL_divergence, LJ_potential, new_average
+                      wlinear_fit, KL_divergence, LJ_potential, new_average, \
+                      fit_powerlaw
 from .random_walk_diffusion import random_spin3d, random_walk_3D
