@@ -194,3 +194,20 @@ def contacts_t (sim,polymer_text,tracer_text,teq,tsample,threshold) :
         c = d<threshold
         C[:,i,:] = c
     return C
+
+def distance_matrix (sim,polymer_text,teq,tsample,threshold=2.5) :
+    """
+    Calculate the matrix of average intra-polymer distances. User must supply
+    the parameters teq, tsample and threshold.
+    """
+    u = sim.u
+    polymer = u.select_atoms (polymer_text)
+    N = polymer.n_atoms
+    nslice = mbt.traj_nslice (u,teq,tsample)
+    d = np.zeros((N,N))
+    for i,ts in enumerate(u.trajectory[teq::tsample]) :
+        this_d = distance_array(polymer.positions,
+                           polymer.positions,
+                           box=ts.dimensions)
+        d = mbt.new_average(i,d,this_d)
+    return d
