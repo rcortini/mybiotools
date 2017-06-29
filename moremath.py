@@ -102,5 +102,5 @@ def fit_powerlaw(x,y) :
     mask = np.logical_and(x>0,y>0)
     xfit = np.log(x[mask])
     yfit = np.log(y[mask])
-    res = mbt.linear_fit(xfit,yfit)
+    res = linear_fit(xfit,yfit)
     return np.exp(res[1]),res[0]
