@@ -211,3 +211,28 @@ def distance_matrix (sim,polymer_text,teq,tsample,threshold=2.5) :
                            box=ts.dimensions)
         d = mbt.new_average(i,d,this_d)
     return d
+
+def DKL_t (sim,polymer_text,tracer_text,teq,tsample,threshold) :
+    # define DKL(t) vector
+    nframes = traj_nslice(sim.u,teq,tsample)
+    DKL_t = np.zeros(nframes)
+    # define polymer and tracers
+    polymer = sim.u.select_atoms(polymer_text)
+    tracers = sim.u.select_atoms(tracer_text)
+    N = polymer.n_atoms
+    ntracers = tracers.n_atoms
+    # init H and C vectors
+    H = np.zeros((N,N))
+    C = np.zeros((N,ntracers))
+    # analyze all simulation frames as decided
+    for i,ts in enumerate(sim.u.trajectory[teq::tsample]) :
+        # calculate Hi-C at this time frame
+        d = distance_array(polymer.positions,polymer.positions,box=ts.dimensions)
+        H += (d<threshold)
+        Rt = H.sum(axis=1)
+        # calculate ChIP-seq at this time frame
+        c = distance_array(polymer.positions,tracers.positions,box=ts.dimensions)
+        C += (c<threshold)
+        Ct = C.sum(axis=1)
+        DKL_t[i] = mbt.KL_divergence(Ct,Rt)
+    return DKL_t
