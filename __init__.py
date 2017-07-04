@@ -13,3 +13,4 @@ from .moremath import autocorrelation, linear_fit, linear_regression,\
                       wlinear_fit, KL_divergence, LJ_potential, new_average, \
                       fit_powerlaw
 from .random_walk_diffusion import random_spin3d, random_walk_3D
+from .mc import metropolis
