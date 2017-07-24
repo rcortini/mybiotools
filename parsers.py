@@ -96,11 +96,11 @@ def load_hic_Rao (hic_res,name,normed=True) :
     Rao_datadir = '/mnt/ant-login/rcortini/work/data/GM12878_replicate/'
     hic_res_string = res_string (hic_res)
     # build the directory name that contains the data that we want to analyze
-    d = '%s/%s_resolution_intrachromosomal/chr%s/MAPQGE30'%(Rao_datadir,
+    d = '%s/%s_resolution_intrachromosomal/%s/MAPQGE30'%(Rao_datadir,
                                                             hic_res_string,
                                                             name)
-    fname = '%s/chr%s_%s.RAWobserved'%(d,name,hic_res_string)
-    normname = '%s/chr%s_%s.KRnorm'%(d,name,hic_res_string)
+    fname = '%s/%s_%s.RAWobserved'%(d,name,hic_res_string)
+    normname = '%s/%s_%s.KRnorm'%(d,name,hic_res_string)
     if not os.path.exists (fname) or not os.path.exists (fname) :
         raise ValueError('Data for chromosome %s at resolution %d does not exist'
                          %(name,hic_res))
@@ -131,7 +131,7 @@ def chromosome_size (name) :
     with open (fname,'r') as f :
         for line in f :
             curatedline = line.strip('\n').split()
-            if curatedline[0] == 'chr%s'%(name) :
+            if curatedline[0] == '%s'%(name) :
                 return int (curatedline[1])
     return 0
 
