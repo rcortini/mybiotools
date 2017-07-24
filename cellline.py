@@ -31,15 +31,15 @@ def region_hic (hic,chromosome,start,end,resolution) :
         # get all the values that correspond to the Region's chromosome and
         # extension
         mask = np.logical_and (hic['data']['chr']==chromosome,
-                               np.logical_and(hic['data']['start']>=start,
-                                              hic['data']['end']<end))
+                               np.logical_and(hic['data']['i']>=start,
+                                              hic['data']['j']<end))
         rawH = hic['data'][mask]
         # set the values of the matrix
         N = (end-start)/resolution
         H = np.zeros((N,N),dtype=rawH['val'].dtype)
         for h in rawH :
-            i = (h['start']-start)/resolution
-            j = (h['end']-start)/resolution
+            i = (h['i']-start)/resolution
+            j = (h['j']-start)/resolution
             H[i,j] = H[j,i] = h['val']
     except IndexError :
         H = hic['data']

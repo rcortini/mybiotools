@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
-from .utils import warn_message
+from .utils import log_message, warn_message
 from .parsers import res_string, parse_kallisto_rnaseq
 
 def load_beato_metadata (
@@ -70,6 +70,7 @@ def cell_load_hic (cell,tracks,resolution,
         metadata['resolution'] = resolution
         metadata['fname'] = hic_location (sample_id,resolution)
         if metadata['fname'] is not None :
+            log_message('cell_load_hic','Loading %s'%(sample_id))
             cell.load_track(metadata)
 
 def load_rnaseq (sample_id,xavi_datadir='/mnt/xavi/data') :
