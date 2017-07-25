@@ -86,14 +86,14 @@ def res_string (res) :
         s = 'k'
     return '%d%sb'%(m,s)
 
-def load_hic_Rao (hic_res,name,normed=True) :
+def load_hic_Rao (hic_res,name,normed=True,
+                  Rao_datadir = '/mnt/ant-login/rcortini/work/data/GM12878_replicate/') :
     """
     Load the Hi-C matrices from the experiments of Rao et al, 2014, for the
     lymphoblastoid cell line GM12878. User must specify the resolution, the name
     of the chromosome, and whether or not to apply the normalization suggested
     in the paper
     """
-    Rao_datadir = '/mnt/ant-login/rcortini/work/data/GM12878_replicate/'
     hic_res_string = res_string (hic_res)
     # build the directory name that contains the data that we want to analyze
     d = '%s/%s_resolution_intrachromosomal/%s/MAPQGE30'%(Rao_datadir,
