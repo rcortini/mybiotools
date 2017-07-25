@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import entropy
 
 def counts_hic (H,threshold) :
     """
@@ -10,7 +11,7 @@ def counts_hic (H,threshold) :
     mask = H.sum(axis=1)>=threshold
     for row in H[mask] :
         cleanrow = row[mask]
-        counts.append(np.exp(scipy.stats.entropy(cleanrow)))
+        counts.append(np.exp(entropy(cleanrow)))
     return np.array(counts),mask
 
 
