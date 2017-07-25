@@ -15,3 +15,4 @@ from .moremath import autocorrelation, linear_fit, linear_regression,\
                       fit_powerlaw
 from .random_walk_diffusion import random_spin3d, random_walk_3D
 from .mc import metropolis
+from .hic_tools import counts_hic
