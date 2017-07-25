@@ -91,7 +91,7 @@ def chromosome_size (name) :
     Returns the size in base pairs of a given chromosome, according to the
     genome version h19
     """
-    fname = '/mnt/ant-login/rcortini/work/data/human/genome_size.dat'
+    fname = '%s/work/data/human/genome_size.dat'%(os.getenv('HOME'))
     with open (fname,'r') as f :
         for line in f :
             curatedline = line.strip('\n').split()
