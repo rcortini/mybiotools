@@ -86,6 +86,19 @@ def res_string (res) :
         s = 'k'
     return '%d%sb'%(m,s)
 
+def chromosome_size (name) :
+    """
+    Returns the size in base pairs of a given chromosome, according to the
+    genome version h19
+    """
+    fname = '/mnt/ant-login/rcortini/work/data/human/genome_size.dat'
+    with open (fname,'r') as f :
+        for line in f :
+            curatedline = line.strip('\n').split()
+            if curatedline[0] == '%s'%(name) :
+                return int (curatedline[1])
+    return 0
+
 def load_hic_Rao (hic_res,name,normed=True,
                   Rao_datadir = '/mnt/ant-login/rcortini/work/data/GM12878_replicate/') :
     """
@@ -104,36 +117,24 @@ def load_hic_Rao (hic_res,name,normed=True,
     if not os.path.exists (fname) or not os.path.exists (fname) :
         raise ValueError('Data for chromosome %s at resolution %d does not exist'
                          %(name,hic_res))
-    norm = np.loadtxt (normname)
-    N = norm.shape[0]
+    if normed :
+        norm = np.loadtxt (normname)
+    N = chromosome_size(name)/hic_res
     H = np.zeros ((N,N))
     with open(fname,'r') as f :
         for line in f :
             c = line.strip('\n').split()
             i = int(c[0])/hic_res
             j = int(c[1])/hic_res
-            if np.isnan (norm[i]) or np.isnan (norm[j]) :
-                M = float(c[2])
-            else :
-                if normed :
-                    M = float(c[2])/(norm[i]*norm[j])
-                else :
+            if normed :
+                if np.isnan (norm[i]) or np.isnan (norm[j]) :
                     M = float(c[2])
+                else :
+                    M = float(c[2])/(norm[i]*norm[j])
+            else :
+                M = float(c[2])
             H[i,j] = H[j,i] = M
     return H
-
-def chromosome_size (name) :
-    """
-    Returns the size in base pairs of a given chromosome, according to the
-    genome version h19
-    """
-    fname = '/mnt/ant-login/rcortini/work/data/human/genome_size.dat'
-    with open (fname,'r') as f :
-        for line in f :
-            curatedline = line.strip('\n').split()
-            if curatedline[0] == '%s'%(name) :
-                return int (curatedline[1])
-    return 0
 
 def parse_hic (name) :
     """
