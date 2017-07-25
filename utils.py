@@ -1,5 +1,5 @@
 from __future__ import print_function
-import time, sys
+import time, sys, errno, os
 import numpy as np
 
 def time_string () :
@@ -25,3 +25,12 @@ def consecutive_true(data):
     return np.diff(np.where(np.concatenate(([data[0]],
                                      data[:-1] != data[1:],
                                      [True])))[0])[::2]
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
