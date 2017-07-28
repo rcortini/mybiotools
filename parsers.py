@@ -119,7 +119,7 @@ def load_hic_Rao (hic_res,name,normed=True,
                          %(name,hic_res))
     if normed :
         norm = np.loadtxt (normname)
-    N = chromosome_size(name)/hic_res
+    N = chromosome_size(name)/hic_res + 1
     H = np.zeros ((N,N))
     with open(fname,'r') as f :
         for line in f :
