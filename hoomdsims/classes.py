@@ -5,11 +5,11 @@ from . import simanalysis
 from mybiotools.moremath import KL_divergence
 
 class hoomdsim :
-    def __init__ (self,xml,dcd=None) :
+    def __init__ (self,topology_file,dcd=None) :
         if dcd is not None :
-            u = mda.Universe (xml,dcd,format='DCD')
+            u = mda.Universe (topology_file,dcd,format='DCD')
         else :
-            u = mda.Universe (xml)
+            u = mda.Universe (topology_file)
         self.u = u
 
     def calculate_hic (self,polymer_text,teq,tsample,threshold=2.5) :
