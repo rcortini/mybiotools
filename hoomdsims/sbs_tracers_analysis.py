@@ -54,7 +54,11 @@ def load_sim(run_id,phi,e,n) :
     simdir = sim_directory(run_id,phi,e,n)
     xml = '%s/%s.xml'%(simdir,simname)
     dcd = '%s/%s.dcd'%(simdir,simname)
-    sim = mbt.hoomdsim (xml,dcd)
+    gsd = '%s/%s.gsd'%(simdir,simname)
+    if os.path.exists(xml) and os.path.exists(dcd) :
+        sim = mbt.hoomdsim (xml,dcd)
+    elif os.path.exists(gsd) :
+        sim = mbt.hoomdsim(gsd)
     sim.phi = phi
     sim.e = e
     sim.n = n
