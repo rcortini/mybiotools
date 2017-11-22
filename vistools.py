@@ -1,11 +1,8 @@
 import numpy as np
-try :
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Polygon
-    from matplotlib.lines import Line2D
-    import matplotlib.gridspec as gridspec
-except RuntimeError :
-    pass
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
+from matplotlib.lines import Line2D
+import matplotlib.gridspec as gridspec
 from scipy.stats import gaussian_kde
 import itertools
 

@@ -3,8 +3,11 @@ from .parsers import parse_sam, parse_broadpeak, parse_narrowpeak,\
                     chromosome_size
 from .utils import error_message, log_message, warn_message, consecutive_true,\
                    mkdir_p
-from .vistools import myboxplot, plot_hic_matrix, line_plot, ax_only_y,\
-                      color_density_scatter, plot_triangular_matrix
+try :
+    from .vistools import myboxplot, plot_hic_matrix, line_plot, ax_only_y,\
+                          color_density_scatter, plot_triangular_matrix
+except RuntimeError :
+    pass
 from .hoomdsims import *
 from .nettools import *
 from .cellline import CellLine, Region, region_chipseq, region_hic
