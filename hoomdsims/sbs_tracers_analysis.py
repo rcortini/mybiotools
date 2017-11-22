@@ -59,6 +59,9 @@ def load_sim(run_id,phi,e,n) :
         sim = mbt.hoomdsim (xml,dcd)
     elif os.path.exists(gsd) :
         sim = mbt.hoomdsim(gsd)
+    else :
+        mbt.error_message("load_sim","Simulation data for (%.2f, %.1f, %d) not found"%(phi,e,n))
+        return None
     sim.phi = phi
     sim.e = e
     sim.n = n
