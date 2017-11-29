@@ -3,11 +3,15 @@ import MDAnalysis as mda
 from MDAnalysis.analysis.distances import contact_matrix, distance_array
 from . import simanalysis
 from mybiotools.moremath import KL_divergence
+import os
 
 class hoomdsim :
     def __init__ (self,topology_file,dcd=None) :
         if dcd is not None :
-            u = mda.Universe (topology_file,dcd,format='DCD')
+            if not os.path.exists(dcd) and topology_file.endswith('.gsd'):
+                u = mda.Universe (topology_file)
+            else :
+                u = mda.Universe (topology_file,dcd,format='DCD')
         else :
             u = mda.Universe (topology_file)
         self.u = u
