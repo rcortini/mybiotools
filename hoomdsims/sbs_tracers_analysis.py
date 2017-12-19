@@ -11,9 +11,6 @@ sim_base_name = 'sbs_tracers'
 N = 1024
 ntracers = 10
 nframes = 10000
-phivals = np.loadtxt('%s/phi_vals'%(production_dir))
-evals = np.loadtxt('%s/e_vals'%(production_dir))
-nsims = int (np.loadtxt('%s/n_sims'%(production_dir)))
 dt = 0.005
 dcd_freq = 10000
 
