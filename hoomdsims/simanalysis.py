@@ -265,4 +265,4 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
         C += (c<t_threshold)
         Ct = C.sum(axis=1)
         DKL_t[i] = mbt.KL_divergence(Ct,Rt)
-    return DKL_t,H,C
+    return DKL_t,H,Ct.astype(np.int64)
