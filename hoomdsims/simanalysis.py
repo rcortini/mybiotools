@@ -240,8 +240,9 @@ def DKL_t (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_threshold) :
 def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_threshold) :
     """
     This function does the complete analysis of the tracers in the simulation.
-    It calculates the virtual Hi-C, virtual ChIP-seq, and Kullback-Leibler
-    divergence between the two profiles as a function of time.
+    It calculates the virtual Hi-C, virtual ChIP-seq, Kullback-Leibler
+    divergence between the two profiles as a function of time, and coverage of
+    the tracers.
     """
     # define DKL(t) vector
     nframes = traj_nslice(sim.u,teq,tsample)
@@ -252,8 +253,8 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
     N = polymer.n_atoms
     ntracers = tracers.n_atoms
     # init H and C vectors
-    H = np.zeros((N,N))
-    C = np.zeros((N,ntracers))
+    H = np.zeros((N,N),dtype=np.int32)
+    C = np.zeros((N,ntracers),dtype=np.int32)
     # analyze all simulation frames as decided
     for i,ts in enumerate(sim.u.trajectory[teq::tsample]) :
         # calculate Hi-C at this time frame
@@ -265,4 +266,7 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
         C += (c<t_threshold)
         Ct = C.sum(axis=1)
         DKL_t[i] = mbt.KL_divergence(Ct,Rt)
-    return DKL_t,H,Ct.astype(np.int64)
+    # coverage analysis
+    C[C>1] = 1
+    coverage = C.sum(axis=0).astype('float')/N
+    return DKL_t,H,Ct.astype(np.int64),coverage
