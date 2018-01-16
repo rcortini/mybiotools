@@ -76,7 +76,10 @@ def wlinear_fit (x,y,w) :
     return a,b,cov_00,cov_11,cov_01,chi2
 
 def KL_divergence (P,Q) :
-    return stats.entropy (P,Q)
+    if P.sum()>0 and Q.sum()>0 :
+        return stats.entropy (P,Q)
+    else :
+        return np.nan
 
 def LJ_potential (r,sigma,epsilon) :
     """Lennard-Jones potential"""
