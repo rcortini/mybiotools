@@ -1,6 +1,6 @@
 from .parsers import parse_sam, parse_broadpeak, parse_narrowpeak,\
                     load_hic_Rao, parse_hic, res_string, parse_kallisto_rnaseq,\
-                    chromosome_size
+                    chromosome_size, bam_to_matrix
 from .utils import error_message, log_message, warn_message, consecutive_true,\
                    mkdir_p
 try :
