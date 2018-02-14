@@ -13,7 +13,7 @@ from .nettools import *
 from .cellline import CellLine, Region, region_chipseq, region_hic
 from .beatolabtools import load_beato_metadata, load_hic_metadata, \
                            cell_load_tracks, cell_load_hic, load_rnaseq,\
-                           track_location, hic_location
+                           track_location, hic_location, bam_location
 from .moremath import autocorrelation, linear_fit, linear_regression,\
                       wlinear_fit, KL_divergence, LJ_potential, new_average, \
                       fit_powerlaw
