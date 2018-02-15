@@ -174,22 +174,22 @@ def bam_to_matrix(bam,chromosome,start,end,resolution,
     Returns a matrix of counts at the given resolution.
     """
     # the 'b' flag here indicates that we are dealing with a bam file
-    samfile = pysam.AlignmentFile(bam,'rb')
-    # init the matrix
-    N = (end-start)/resolution
-    H = np.zeros((N,N),dtype=np.int32)
-    # init the iterator
-    samiter = samfile.fetch(chromosome,start,end)
-    # iterate
-    for read in samiter :
-        if read.flag <= flag :
-            i = read.pos
-            j = read.mpos
-            # we don't check 'i' here: this is already guaranteed by the
-            # invocation to the "fetch" in samtools
-            if j>=start and j<=end :
-                i_mat = (i-start)/resolution
-                j_mat = (j-start)/resolution
-                H[i_mat,j_mat] += 1
-                H[j_mat,i_mat] += 1
+    with pysam.AlignmentFile(bam,'rb') as samfile :
+        # init the matrix
+        N = (end-start)/resolution
+        H = np.zeros((N,N),dtype=np.int32)
+        # init the iterator
+        samiter = samfile.fetch(chromosome,start,end)
+        # iterate
+        for read in samiter :
+            if read.flag <= flag :
+                i = read.pos
+                j = read.mpos
+                # we don't check 'i' here: this is already guaranteed by the
+                # invocation to the "fetch" in samtools
+                if j>=start and j<=end :
+                    i_mat = (i-start)/resolution
+                    j_mat = (j-start)/resolution
+                    H[i_mat,j_mat] += 1
+                    H[j_mat,i_mat] += 1
     return H
