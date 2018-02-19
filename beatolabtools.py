@@ -88,7 +88,7 @@ def load_rnaseq (sample_id,xavi_datadir='/mnt/xavi/data') :
         ref_genome = fname.replace(this_datadir,'').replace('/paired_end/abundance.tsv','')
     return parse_kallisto_rnaseq(fname), ref_genome
 
-def bam_location(sample_id,hic_bam_datadir='/mnt/hic_bam') :
+def hic_bam_location(sample_id,hic_bam_datadir='/mnt/hic_bam') :
     """
     Returns the location of the BAM file of the corresponding 'sample_id'
     """
@@ -100,5 +100,5 @@ def bam_location(sample_id,hic_bam_datadir='/mnt/hic_bam') :
                 if f.endswith('.bam') :
                     fname = '%s/%s'%(root,f)
     if fname is None :
-        mbt.warn_message('bam_location','Data not found for %s'%sample_id)
+        mbt.warn_message('hic_bam_location','Data not found for %s'%sample_id)
     return fname
