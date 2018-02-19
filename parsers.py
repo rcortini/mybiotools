@@ -193,3 +193,15 @@ def bam_to_matrix(bam,chromosome,start,end,resolution,
                     H[i_mat,j_mat] += 1
                     H[j_mat,i_mat] += 1
     return H
+
+def parse_simple_bed (fname) :
+    """
+    A parser for a BED file that contains only the indication of chromosome,
+    region start and region end.
+    """
+    simple_bed_dtype = np.dtype([
+                                ('chr','S10'),
+                                ('start',np.int64),
+                                ('end',np.int64)
+                               ])
+    return np.genfromtxt (fname,dtype=simple_bed_dtype)
