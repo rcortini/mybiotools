@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 from .utils import log_message, warn_message
-from .parsers import res_string, parse_kallisto_rnaseq
+from .parsers import res_string, parse_kallisto_rnaseq, parse_simple_bed
 
 def load_beato_metadata (
     metadata_file='/home/rcortini/work/data/beato_lab_metadata.xlsx') :
@@ -102,3 +102,30 @@ def hic_bam_location(sample_id,hic_bam_datadir='/mnt/hic_bam') :
     if fname is None :
         mbt.warn_message('hic_bam_location','Data not found for %s'%sample_id)
     return fname
+
+def bw_location (sample_id,xavi_datadir='/mnt/xavi/data') :
+    # build the directory name where the files are
+    d = "%s/chipseq/samples/%s/peaks"%(xavi_datadir,sample_id)
+    # select all files that end with ".bw" in the directory, and
+    # then prefer to read the one that is in the directory that has
+    # "with_control"
+    peakfiles = []
+    for root,sub,files in os.walk(d) :
+        for f in files :
+            if f.endswith (".bw") :
+                peakfiles.append('%s/%s'%(root,f))
+    fin = None
+    for peakfile in peakfiles :
+        if 'with_control' in peakfile :
+            fin = peakfile
+            break
+        else :
+            fin = peakfile
+    if fin is None :
+        warn_message('bw_location','Data not found for %s'%sample_id)
+    return fin
+
+def load_hcp_peaks (peaks_id,xavi_datadir='/mnt/xavi') :
+    datadir = '%s/projects/gvicent/2017-01-23_characterisation_prbs_r5020_titration/tables'%(xavi_datadir)
+    datafile = '%s/genomic_coordinates_by_peak_population_%s.bed'%(datadir,peaks_id)
+    return parse_simple_bed(datafile)
