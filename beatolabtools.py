@@ -125,3 +125,24 @@ def bw_location (sample_id,xavi_datadir='/mnt/xavi/data') :
         warn_message('bw_location','Data not found for %s'%sample_id)
     return fin
 
+def chipseq_bam_location (sample_id,xavi_datadir='/mnt/xavi/data') :
+    # build the directory name where the files are
+    d = "%s/chipseq/samples/%s/alignments"%(xavi_datadir,sample_id)
+    # select all files that end with ".bw" in the directory, and
+    # then prefer to read the one that is in the directory that has
+    # "with_control"
+    peakfiles = []
+    for root,sub,files in os.walk(d) :
+        for f in files :
+            if f.endswith (".bam") :
+                peakfiles.append('%s/%s'%(root,f))
+    fin = None
+    for peakfile in peakfiles :
+        if 'with_control' in peakfile :
+            fin = peakfile
+            break
+        else :
+            fin = peakfile
+    if fin is None :
+        warn_message('chipseq_bam_location','Data not found for %s'%sample_id)
+    return fin
