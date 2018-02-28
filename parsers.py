@@ -205,3 +205,17 @@ def parse_simple_bed (fname) :
                                 ('end',np.int64)
                                ])
     return np.genfromtxt (fname,dtype=simple_bed_dtype)
+
+
+def counts_to_hic (counts,start,end,resolution) :
+    """
+    Returns a complete filled matrix given the 'counts' array, by taking
+    for granted that the counts correspond to a given chromosome.
+    """
+    N = (end-start)/resolution + 1
+    H = np.zeros((N,N),dtype=counts['val'].dtype)
+    for h in counts :
+        i = (h['i']-start)/resolution
+        j = (h['j']-start)/resolution
+        H[i,j] = H[j,i] = h['val']
+    return H
