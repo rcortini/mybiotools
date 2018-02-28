@@ -48,6 +48,8 @@ def line_plot (ax,xvals,yvals,N1=None,N2=None,show_xaxis=False,
         ax.set_xlim (min(xvals),max(xvals))
         mask = np.ones_like(xvals,dtype=bool)
     # plot values
+    xvals = np.array(xvals)
+    yvals = np.array(yvals)
     for x,y in zip(xvals[mask],yvals[mask]) :
         ax.add_artist(Line2D((x,x),(0,y),color=color,linewidth=linewidth))
     # plot borders
