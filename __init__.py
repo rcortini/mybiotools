@@ -22,3 +22,4 @@ from .moremath import autocorrelation, linear_fit, linear_regression,\
 from .random_walk_diffusion import random_spin3d, random_walk_3D
 from .mc import metropolis
 from .hic_tools import counts_hic
+from .zerone_utils import parse_zerone_output, find_zerone_peak
