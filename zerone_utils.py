@@ -59,6 +59,6 @@ def find_zerone_peak(a,c_idx,peak,bin_size=300) :
     peak_idx_start = peak['start']//bin_size
     peak_idx_end = peak['end']//bin_size
     if peak_idx_start == peak_idx_end :
-        return a[c_start+peak_idx_start]
+        return [a[c_start+peak_idx_start]]
     else :
         return a[c_start+peak_idx_start:c_start+peak_idx_end+1]
