@@ -125,7 +125,7 @@ def bw_location (sample_id,xavi_datadir='/mnt/xavi/data') :
         warn_message('bw_location','Data not found for %s'%sample_id)
     return fin
 
-def chipseq_bam_location (sample_id,xavi_datadir='/mnt/xavi/data') :
+def chipseq_bam_location (sample_id,xavi_datadir='/mnt/mbeato/projects/data') :
     # build the directory name where the files are
     d = "%s/chipseq/samples/%s/alignments"%(xavi_datadir,sample_id)
     # select all files that end with ".bw" in the directory, and
