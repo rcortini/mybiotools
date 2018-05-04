@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pysam
 import os
 from .utils import log_message, warn_message
 from .parsers import res_string, parse_kallisto_rnaseq, parse_simple_bed
@@ -146,3 +147,20 @@ def chipseq_bam_location (sample_id,xavi_datadir='/mnt/mbeato/projects/data') :
     if fin is None :
         warn_message('chipseq_bam_location','Data not found for %s'%sample_id)
     return fin
+
+class ChIPseq :
+    def __init__(self,sample_id) :
+        self.sample_id = sample_id
+        self.bam_file = chipseq_bam_location(sample_id)
+        # init the pysam parser
+        self.bam = pysam.AlignmentFile(self.bam_file)
+    def peak_counts(self,peak,extend=None) :
+        chromosome,start,end = peak
+        if extend is not None :
+            start -= extend
+            end += extend
+        chromosome = str(chromosome)
+        # use the BigWig parser to get the stats of the peak
+        return self.bam.count(chromosome,start,end)
+    def __del__(self) :
+        self.bam.close()

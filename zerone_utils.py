@@ -34,9 +34,13 @@ def parse_zerone_output(fname,chromosome_list=None) :
         for line in f :
             if not line.startswith('#') :
                 break
-    n_readcols = len(line.split())-5
-    zerone_dtype = [('chr','S256'),('start',np.int64),('end',np.int64),('enrichment',np.int32)]
-    for i in range(1,n_readcols+1) :
+    n_readcols = len(line.split())-6
+    zerone_dtype = [('chr','S256'),
+                    ('start',np.int64),
+                    ('end',np.int64),
+                    ('enrichment',np.int32),
+                    ('control',np.int64)]
+    for i in range(n_readcols) :
         zerone_dtype.append(('read_%d'%(i),np.int64))
     zerone_dtype.append(('p',float))
     # now we parse the file using the `genfromtxt` function from numpy
