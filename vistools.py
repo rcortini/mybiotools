@@ -5,6 +5,10 @@ from matplotlib.lines import Line2D
 import matplotlib.gridspec as gridspec
 from scipy.stats import gaussian_kde
 import itertools
+import matplotlib as mpl
+from matplotlib.text import TextPath
+from matplotlib.patches import PathPatch
+from matplotlib.font_manager import FontProperties
 
 def myboxplot (ax,data,colors) :
     bp = ax.boxplot(data, 1, '')
@@ -90,3 +94,59 @@ def plot_triangular_matrix (ax,C,cmap=plt.cm.gray):
     ax.add_artist(Line2D((0,n/2),(0,n),color='k',linewidth=1))
     ax.add_artist(Line2D((n,n/2),(0,n),color='k',linewidth=1))
     ax.set_yticklabels([])
+
+def letterAt(letter, x, y, yscale=1, ax=None):
+    """
+    This function is used in the sequence_logo function, and is not exported in
+    the module. From https://stackoverflow.com/a/42631740/2312821
+    """
+    fp = FontProperties(family="DejaVu Sans", weight="bold") 
+    globscale = 1.35
+    LETTERS = { "T" : TextPath((-0.305, 0), "T", size=1, prop=fp),
+                "G" : TextPath((-0.384, 0), "G", size=1, prop=fp),
+                "A" : TextPath((-0.35, 0), "A", size=1, prop=fp),
+                "C" : TextPath((-0.366, 0), "C", size=1, prop=fp) }
+    COLOR_SCHEME = {'G': 'orange', 
+                    'A': 'red', 
+                    'C': 'blue', 
+                    'T': 'darkgreen'}
+    text = LETTERS[letter]
+    t = mpl.transforms.Affine2D().scale(1*globscale, yscale*globscale) + \
+        mpl.transforms.Affine2D().translate(x,y) + ax.transData
+    p = PathPatch(text, lw=0, fc=COLOR_SCHEME[letter],  transform=t)
+    if ax != None:
+        ax.add_artist(p)
+    return p
+
+def sequence_logo(pwm) :
+    """
+    Draws a sequence logo starting from a position weight matrix. The position
+    weight matrix should be an instance of the
+    Bio.motifs.matrix.PositionWeightMatrix class.
+    """
+    N = pwm.length
+    # first, calculate the information content in each position
+    ic = np.zeros(N)
+    for i in xrange(N) :
+        s = 2.0
+        for letter in pwm.iterkeys() :
+            x = pwm[letter][i]
+            if x>0 : s += x*np.log2(x)
+        ic[i] = s
+    # then initiate the figure
+    fig,ax = plt.subplots(figsize=(N,3))
+    ax_only_y(ax,show_xaxis=True)
+    # fill the figure with the letters
+    for x in xrange(pwm.length) :
+        y = 0
+        I = ic[x]
+        for letter in pwm.iterkeys() :
+            score = pwm[letter][x]*I
+            letterAt(letter,x+1,y,score,ax)
+            y += score
+    # final adjustments
+    plt.xticks(range(1,x+2))
+    plt.xlim((0,x+2))
+    plt.ylim(0,2)
+    # and return
+    return fig

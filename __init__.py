@@ -6,7 +6,7 @@ from .utils import error_message, log_message, warn_message, consecutive_true,\
                    mkdir_p
 try :
     from .vistools import myboxplot, plot_hic_matrix, line_plot, ax_only_y,\
-                          color_density_scatter, plot_triangular_matrix
+                          color_density_scatter, plot_triangular_matrix, sequence_logo
 except RuntimeError :
     pass
 from .hoomdsims import *
@@ -15,7 +15,7 @@ from .cellline import CellLine, Region, region_chipseq, region_hic
 from .beatolabtools import load_beato_metadata, load_hic_metadata, \
                            cell_load_tracks, cell_load_hic, load_rnaseq,\
                            track_location, hic_location, hic_bam_location,\
-                           bw_location, chipseq_bam_location
+                           bw_location, chipseq_bam_location, ChIPseq
 from .moremath import autocorrelation, linear_fit, linear_regression,\
                       wlinear_fit, KL_divergence, LJ_potential, new_average, \
                       fit_powerlaw
