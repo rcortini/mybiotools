@@ -3,7 +3,8 @@ import pandas as pd
 import pysam
 import os
 from .utils import log_message, warn_message
-from .parsers import res_string, parse_kallisto_rnaseq, parse_simple_bed
+from .parsers import res_string, parse_kallisto_rnaseq, parse_simple_bed,\
+                      parse_narrowpeak
 
 def load_beato_metadata (
     metadata_file='/home/rcortini/work/data/beato_lab_metadata.xlsx') :
@@ -148,12 +149,38 @@ def chipseq_bam_location (sample_id,xavi_datadir='/mnt/mbeato/projects/data') :
         warn_message('chipseq_bam_location','Data not found for %s'%sample_id)
     return fin
 
+def chipseq_peaks_location (sample_id, xavi_datadir='/mnt/mbeato/projects/data') :
+    # build the directory name where the files are
+    d = "%s/chipseq/samples/%s/peaks"%(xavi_datadir,
+                                  sample_id)
+    # select all files that end with ".narrowPeak" in the directory, and
+    # then prefer to read the one that is in the directory that has
+    # "with_control"
+    peakfiles = []
+    for root,sub,files in os.walk(d) :
+        for f in files :
+            if f.endswith (".narrowPeak") :
+                peakfiles.append('%s/%s'%(root,f))
+    fin = None
+    for peakfile in peakfiles :
+        if 'with_control' in peakfile :
+            fin = peakfile
+            break
+        else :
+            fin = peakfile
+    if fin is None :
+        warn_message('peaks_location','Data not found for %s'%sample_id)
+    return fin
+
 class ChIPseq :
     def __init__(self,sample_id) :
         self.sample_id = sample_id
         self.bam_file = chipseq_bam_location(sample_id)
+        self.peaks_file = chipseq_peaks_location(sample_id)
         # init the pysam parser
         self.bam = pysam.AlignmentFile(self.bam_file)
+        # parse the peaks file
+        self.peaks = parse_narrowpeak(self.peaks_file)
     def peak_counts(self,peak,extend=None) :
         chromosome,start,end = peak
         if extend is not None :
