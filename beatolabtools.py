@@ -173,16 +173,16 @@ def chipseq_peaks_location (sample_id, xavi_datadir='/mnt/mbeato/projects/data')
     return fin
 
 class ChIPseq :
-    def __init__(self,sample_id) :
+    def __init__(self, sample_id, xavi_datadir='/mnt/mbeato/projects/data') :
         self.sample_id = sample_id
-        self.bam_file = chipseq_bam_location(sample_id)
-        self.peaks_file = chipseq_peaks_location(sample_id)
+        self.bam_file = chipseq_bam_location(sample_id, xavi_datadir)
+        self.peaks_file = chipseq_peaks_location(sample_id, xavi_datadir)
         # init the pysam parser
         self.bam = pysam.AlignmentFile(self.bam_file)
         # parse the peaks file
         self.peaks = parse_narrowpeak(self.peaks_file)
     def peak_counts(self,peak,extend=None) :
-        chromosome,start,end = peak
+        chromosome,start,end = peak['chr'], peak['start'], peak['end']
         if extend is not None :
             start -= extend
             end += extend
